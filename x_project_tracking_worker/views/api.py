@@ -16,7 +16,7 @@ class ApiView(web.View):
         account_id = post.get('ac', query.get('ac', ''))
         gender = post.get('gender', query.get('gender', 'n'))
         cost = post.get('cost', query.get('cost', 0))
-        time = post.get('time', query.get('time', 356))
+        time = post.get('time', query.get('time', '356'))
         offer_id = post.get('offer_id', query.get('offer_id', ''))
 
         time_check = time_regex.match(time)
