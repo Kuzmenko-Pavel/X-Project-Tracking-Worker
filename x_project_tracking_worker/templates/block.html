@@ -416,9 +416,12 @@ UserHistory.save = function(){
 
 var uh = new UserHistory();
 uh.load();
-var ac_id = '%3%', ids = '%1%'.split(','), action, target, offer_type,offer_id,tmp=[];
-var gender = '%7%';
-var cost = '%8%';
+var ids = '{{offer_id}}'.split(','),
+    second = '{{time}}',
+    ac_id = '{{account_id}}',
+    gender = '{{gender}}',
+    cost = '{{cost}}',
+    action, target, offer_type,offer_id,tmp=[];
 
 if (ac_id != '')
 {
@@ -436,7 +439,7 @@ if (ac_id != '')
             target = typeof target == 'string' ? target : '';
             if (offer_type == 'retargeting')
             {
-                uh[offer_type][action](offer_id + '...' + ac_id, Math.floor(Date.now())+(%2%*1000), ac_id,target, Math.floor(Date.now()/1000));
+                uh[offer_type][action](offer_id + '...' + ac_id, Math.floor(Date.now())+(second*1000), ac_id,target, Math.floor(Date.now()/1000));
             }
             else if (offer_type == 'exclude_advertizer')
             {
@@ -455,18 +458,5 @@ uh.save();
 </script>
 </head>
 <body>
-<script>
-var parser = document.createElement('a');
-var parser_ref = document.createElement('a');
-parser.href = '%5%';
-parser_ref.href = '%4%';
-var hostname = parser.hostname;
-var page = parser.hostname;
-var title = '%6%';
-var referrer = parser_ref.href;
-
-%9%
-
-</script>
 </body>
 </html>

@@ -9,8 +9,21 @@ class ApiView(web.View):
     async def get_data(self):
         host = '127.0.0.1'
         ip_regex = re.compile(r'^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$')
-        method = self.request.method
+        time_regex = re.compile(r'^\d{1,3}$')
         headers = self.request.headers
+        query = self.request.query
+        post = await self.request.post()
+        account_id = post.get('ac', query.get('ac', ''))
+        gender = post.get('gender', query.get('gender', ''))
+        cost = post.get('cost', query.get('cost', ''))
+        time = post.get('time', query.get('time', ''))
+        offer_id = post.get('offer_id', query.get('offer_id', ''))
+
+        time_check = time_regex.match(time)
+        if time_check:
+            time = int(time_check.group()) * 24 * 60 * 60
+        else:
+            time = 356 * 24 * 60 * 60
 
         x_real_ip = headers.get('X-Real-IP', headers.get('X-Forwarded-For', ''))
         x_real_ip_check = ip_regex.match(x_real_ip)
@@ -30,7 +43,12 @@ class ApiView(web.View):
                 logger.error(exception_message(exc=str(ex), request=str(self.request._message)))
 
         data = {
-            'ip': host
+            'ip': host,
+            'account_id': account_id,
+            'gender': gender,
+            'cost': cost,
+            'time': time,
+            'offer_id': offer_id
         }
         return data
 
@@ -54,53 +72,3 @@ class ApiView(web.View):
 
     async def options(self):
         return await self.get_data()
-
-
-#
-# std::string Core::Process(Params *prms)
-# {
-#     std::string html;
-#     params = prms;
-#
-#     request_processed_++;
-#     std::string anal ="\
-#             (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){\
-#             (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),\
-#             m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)\
-#             })(window,document,'script','//www.google-analytics.com/analytics.js','ga');\
-#             if (offer_type == 'retargeting')\
-#             {\
-#                 ga('create', 'UA-69836571-1', {'alwaysSendReferrer': true});\
-#                 ga('send', 'pageview', {\
-#                   'referrer': referrer,\
-#                   'hostname': hostname,\
-#                   'page': page,\
-#                   'title': title\
-#               });\
-#             }\
-#             ga('create', 'UA-69836571-2', {'alwaysSendReferrer': true, 'name': 'all'});\
-#             ga('all.send', 'pageview', {\
-#               'referrer': referrer,\
-#               'hostname': hostname,\
-#               'page': page,\
-#               'title': title\
-#             });";
-#
-#     if ( params->account_id_ == "AEE4E3DD-957C-4E6B-A111-8B43318B78D3")
-#     {
-#         anal ="";
-#     }
-#
-#     html = boost::str(boost::format(config->template_out_)
-#                        % params->offer_id_
-#                        % params->getSecondTimeCookie()
-#                        % params->account_id_
-#                        % params->referrer_
-#                        % params->location_
-#                        % params->title_
-#                        % params->gender_
-#                        % params->cost_
-#                        % anal
-#                         );
-#     return html;
-# }
