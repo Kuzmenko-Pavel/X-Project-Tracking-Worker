@@ -20,6 +20,7 @@ def read_version():
 
 install_requires = ['aiohttp',
                     'aiodns',
+                    'motor',
                     'ujson',
                     'trafaret-config',
                     'pytz',

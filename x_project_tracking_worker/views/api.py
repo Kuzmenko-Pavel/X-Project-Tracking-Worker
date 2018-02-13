@@ -1,13 +1,15 @@
 from aiohttp import web
 import re
 import aiohttp_jinja2
+from datetime import datetime
 from x_project_tracking_worker.logger import logger, exception_message
 
 
 @aiohttp_jinja2.template('block.html')
 class ApiView(web.View):
     async def get_data(self):
-        host = '127.0.0.1'
+        doc = {}
+        ip = '127.0.0.1'
         ip_regex = re.compile(r'^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$')
         time_regex = re.compile(r'^\d{1,3}$')
         headers = self.request.headers
@@ -33,23 +35,29 @@ class ApiView(web.View):
             x_real_ip = None
 
         if x_real_ip is not None:
-            host = x_real_ip
+            ip = x_real_ip
         else:
             try:
                 peername = self.request.transport.get_extra_info('peername')
                 if peername is not None and isinstance(peername, tuple):
-                    host, _ = peername
+                    ip, _ = peername
             except Exception as ex:
                 logger.error(exception_message(exc=str(ex), request=str(self.request._message)))
 
+        dt = datetime.now()
+
         data = {
-            'ip': host,
+            'ip': ip,
             'account_id': account_id,
             'gender': gender,
             'cost': cost,
             'time': time,
             'offer_id': offer_id
         }
+        doc['dt'] = dt
+        doc['account_id'] = account_id
+        doc['ip'] = ip
+        await self.request.app.db.retargeting.insert(doc)
         return data
 
     async def get(self):

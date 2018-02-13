@@ -7,6 +7,7 @@ import sys
 from aiohttp import web
 from trafaret_config import commandline
 
+from x_project_tracking_worker.db import init_db
 from x_project_tracking_worker.templates import init_templates
 from x_project_tracking_worker.logger import logger, exception_message
 from x_project_tracking_worker.middlewares import setup_middlewares
@@ -29,6 +30,7 @@ def init(loop, argv):
     app = web.Application(loop=loop)
     app['config'] = config
     init_templates(app)
+    app.on_startup.append(init_db)
     setup_routes(app)
     setup_middlewares(app)
 
