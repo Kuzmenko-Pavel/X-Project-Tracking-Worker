@@ -52,8 +52,6 @@ class DbWrapper():
         return db_name, collection_name, options
 
     async def check_collection(self):
-        for db_name in self.dbs_name:
-            await self.client.drop_database(db_name)
         tasks = []
         tasks_options = []
         retargeting_collection_name = self.conf['collection']['retargeting']
