@@ -20,8 +20,8 @@ class DbWrapper():
         return self.db[self.retargeting_name]
 
     async def create_collection(self, collection_name):
-        avg_obj_size = 500
-        max_obj = 50000000
+        avg_obj_size = 200
+        max_obj = 2000000
         try:
             await self.db.drop_collection(collection_name)
             await self.db.create_collection(collection_name, size=max_obj * avg_obj_size, capped=True, max=max_obj)
