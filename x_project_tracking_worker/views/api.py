@@ -54,9 +54,19 @@ class ApiView(web.View):
             'time': time,
             'offer_id': offer_id
         }
+        offer_exists = False
+        try:
+            for ids in offer_id.split(','):
+                tmp = ids.split('~')
+                if len(tmp) > 3:
+                    if tmp[1]:
+                        offer_exists = True
+        except Exception as ex:
+            logger.error(exception_message(exc=str(ex), request=str(offer_id)))
         doc['dt'] = dt
         doc['account_id'] = account_id
         doc['ip'] = ip
+        doc['offer_exists'] = offer_exists
         await self.request.app.db.retargeting.insert(doc)
         return data
 
