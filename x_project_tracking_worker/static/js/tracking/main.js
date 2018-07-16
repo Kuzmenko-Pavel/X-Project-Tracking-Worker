@@ -2,9 +2,13 @@
  * Created by user on 13.07.16.
  */
 require([
-    './loader'
+    './callMethod'
 ], function (
-    Loader
+    callMethod
 ) {
-    (window.trackingbyyottos = window.trackingbyyottos || Loader).loader();
+    (function(win){
+        var y = win['YottosTrackObject'] || 'ytt';
+        var tracker = win[y];
+        tracker.callMethod = callMethod;
+    })(window);
 });

@@ -1,1 +1,1 @@
-!function(){var n,o;!function(){n=function(){return new function(){this.loader=function(){}}}(),function(n){(window.writerbyyottos=window.writerbyyottos||n).loader()}(n),o=undefined}()}();
+!function(){var n,o;!function(){n=function(){return new function(){this.loader=function(){console.log("loader")}}}(),function(n){(window.writerbyyottos=window.writerbyyottos||n).loader()}(n),o=undefined}()}();

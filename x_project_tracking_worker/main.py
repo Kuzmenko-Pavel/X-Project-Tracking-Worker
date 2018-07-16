@@ -5,6 +5,7 @@ import os
 import sys
 
 from aiohttp import web
+import aiohttp_debugtoolbar
 from trafaret_config import commandline
 
 from x_project_tracking_worker.db import init_db
@@ -27,8 +28,11 @@ def init(loop, argv):
     options = ap.parse_args(argv)
     config = commandline.config_from_options(options, TRAFARET_CONF)
     config['socket'] = options.socket
+    config['dir_path'] = dir_path
     app = web.Application(loop=loop)
     app['config'] = config
+    if app['config']['debug']['console']:
+        aiohttp_debugtoolbar.setup(app)
     init_templates(app)
     app.on_startup.append(init_db)
     setup_routes(app)

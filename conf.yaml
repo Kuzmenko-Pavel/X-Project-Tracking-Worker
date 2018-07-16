@@ -6,3 +6,7 @@ mongo:
   db: getmyad_log
   collection:
     retargeting: log.retargeting
+
+debug:
+  status: False
+  console: False
