@@ -3,8 +3,8 @@
  */
 define([], function () {
     var callMethod = function (key){
-        var keys = key.split('.').length;
-        if(keys.length = 1){
+        var keys = key.split('.');
+        if(keys.length === 1){
             console.log(this);
         }
         else{
