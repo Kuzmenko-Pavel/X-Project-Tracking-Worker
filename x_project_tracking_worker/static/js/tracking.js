@@ -1,0 +1,1 @@
+!function(){var n,o;!function(){n=function(){return new function(){this.loader=function(){}}}(),function(n){(window.trackingbyyottos=window.trackingbyyottos||n).loader()}(n),o=undefined}()}();
