@@ -31,3 +31,23 @@ $(function() {
 
   $('img').on('load', sectionHeight);
 });
+$(function() {
+
+    var $sidebar   = $("nav"),
+        $window    = $(window),
+        offset     = $sidebar.offset(),
+        topPadding = 25;
+
+    $window.scroll(function() {
+        if ($window.scrollTop() > offset.top) {
+            $sidebar.stop().animate({
+                marginTop: $window.scrollTop() - offset.top + topPadding
+            },'fast');
+        } else {
+            $sidebar.stop().animate({
+                marginTop: 0
+            },'fast');
+        }
+    });
+
+});
