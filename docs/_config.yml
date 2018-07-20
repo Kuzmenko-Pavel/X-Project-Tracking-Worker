@@ -11,4 +11,4 @@ email: admin@yottos.com
 description: Yottos Tracking Code - JavaScript код отслеживания различных действий на сайте рекламодателя.
 # Build settings
 theme: jekyll-theme-architect
-show_downloads: "false"
+show_downloads: false
