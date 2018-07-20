@@ -65,7 +65,7 @@ end
 ### Here is an unordered list:
 
 *   Item foo
-*   Item bar
+    *   Item bar
 *   Item baz
 *   Item zip
 
