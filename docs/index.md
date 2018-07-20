@@ -2,122 +2,47 @@
 layout: default
 ---
 
-Text can be **bold**, _italic_, or ~~strikethrough~~.
+# Как добавить на сайт tracking.js
+Библиотека JavaScript analytics.js позволяет отслеживать взаимодействия пользователей с вашим сайтом. 
+Из этой статьи вы узнаете, как добавить tracking.js на сайт.
 
-[Link to another page](./another-page.html).
+## Код отслеживания JavaScript
+Самый простой способ приступить к использованию tracking.js – это добавить в шаблоны сайта приведенный ниже 
+код отслеживания JavaScript.
 
-There should be whitespace between paragraphs.
+Код нужно добавлять в верхней части тега <head>, перед любым другим скриптом и тегами CSS. 
 
-There should be whitespace between paragraphs. We recommend including a README, or a file with information about your project.
-
-# Header 1
-
-This is a normal paragraph following a header. GitHub is a code hosting platform for version control and collaboration. It lets you and others work together on projects from anywhere.
-
-## Header 2
-
-> This is a blockquote following a header.
->
-> When something is important enough, you do it even if the odds are not in your favor.
-
-### Header 3
-
-```js
-// Javascript code with syntax highlighting.
-var fun = function lang(l) {
-  dateformat.i18n = require('./lang/' + l)
-  return true;
-}
+```html
+    <!-- Yottos Tracking Code -->
+    <script>
+    !function(t,e,c,n,r,a,o,s,u){
+        r=r||"script",n=t[u=u||"YottosTrackObject"]=t[u]||n||"ytt",t[n]||((a=t[n]=function()
+        {var t="callMethod",e="queue",c=arguments;a[e]=a[e]||[],a[t]?a[t].apply(a,c):a[e].push(c)}
+        ).push=a,o=e.createElement(r),s=e.getElementsByTagName(r)[0],o.async=!0,o.src=c,s.parentNode.insertBefore(o,s))
+    }(window,document,'https://cdn.yottos.com/tracking.js');
+    ytt('init', '00000000-0000-0000-0000-000000000000');
+    </script>
+    <!-- End Yottos Tracking Code -->
 ```
+Строку **'00000000-0000-0000-0000-000000000000'** следует заменить идентификатором вашего аккаунта.
 
-```ruby
-# Ruby code with syntax highlighting
-GitHubPages::Dependencies.gems.each do |gem, version|
-  s.add_dependency(gem, "= #{version}")
-end
+
+## Oтслеживание динамического ретаргетинга
+Если необходимо запоминать товары для ретаргетинга, то вышеописанный код необходимо привести к следуюшему виду
+```html
+    <!-- Yottos Tracking Code -->
+    <script>
+    !function(t,e,c,n,r,a,o,s,u){
+        r=r||"script",n=t[u=u||"YottosTrackObject"]=t[u]||n||"ytt",t[n]||((a=t[n]=function()
+        {var t="callMethod",e="queue",c=arguments;a[e]=a[e]||[],a[t]?a[t].apply(a,c):a[e].push(c)}
+        ).push=a,o=e.createElement(r),s=e.getElementsByTagName(r)[0],o.async=!0,o.src=c,s.parentNode.insertBefore(o,s))
+    }(window,document,'https://cdn.yottos.com/tracking.js');
+    ytt('init', '00000000-0000-0000-0000-000000000000', {
+        'time':10,
+        'add': 'id_offer'
+    });
+    </script>
+    <!-- End Yottos Tracking Code -->
 ```
-
-#### Header 4
-
-*   This is an unordered list following a header.
-*   This is an unordered list following a header.
-*   This is an unordered list following a header.
-
-##### Header 5
-
-1.  This is an ordered list following a header.
-2.  This is an ordered list following a header.
-3.  This is an ordered list following a header.
-
-###### Header 6
-
-| head1        | head two          | three |
-|:-------------|:------------------|:------|
-| ok           | good swedish fish | nice  |
-| out of stock | good and plenty   | nice  |
-| ok           | good `oreos`      | hmm   |
-| ok           | good `zoute` drop | yumm  |
-
-### There's a horizontal rule below this.
-
-* * *
-
-### Here is an unordered list:
-
-*   Item foo
-*   Item bar
-*   Item baz
-*   Item zip
-
-### And an ordered list:
-
-1.  Item one
-1.  Item two
-1.  Item three
-1.  Item four
-
-### And a nested list:
-
-- level 1 item
-  - level 2 item
-  - level 2 item
-    - level 3 item
-    - level 3 item
-- level 1 item
-  - level 2 item
-  - level 2 item
-  - level 2 item
-- level 1 item
-  - level 2 item
-  - level 2 item
-- level 1 item
-
-### Small image
-
-![Octocat](https://assets-cdn.github.com/images/icons/emoji/octocat.png)
-
-### Large image
-
-![Branching](https://guides.github.com/activities/hello-world/branching.png)
-
-
-### Definition lists can be used with HTML syntax.
-
-<dl>
-<dt>Name</dt>
-<dd>Godzilla</dd>
-<dt>Born</dt>
-<dd>1952</dd>
-<dt>Birthplace</dt>
-<dd>Japan</dd>
-<dt>Color</dt>
-<dd>Green</dd>
-</dl>
-
-```
-Long, single-line code blocks should not wrap. They should horizontally scroll if they are too long. This line should be long enough to demonstrate this.
-```
-
-```
-The final element.
-```
+Строку **'00000000-0000-0000-0000-000000000000'** следует заменить идентификатором вашего аккаунта.
+Строку **'id_offer'** следует заменить идентификатором вашего аккаунта.
