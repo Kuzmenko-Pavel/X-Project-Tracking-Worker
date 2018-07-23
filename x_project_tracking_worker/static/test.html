@@ -63,12 +63,12 @@
     ytt('set', 'price', 102);
     ytt('t1.set', 'price', 103);
     ytt('t2.set', 'price', 104);
-    ytt('track', 'remarketing', 'add', 1);
-    ytt('t1.track', 'remarketing', 'add', 2);
-    ytt('t2.track', 'remarketing', 'add', 3);
-    ytt('track', 'remarketing', 'remove', 1);
-    ytt('t1.track', 'remarketing', 'remove', 2);
-    ytt('t2.track', 'remarketing', 'remove', 3);
+    ytt('track', 'remarketing', {'add': 1});
+    ytt('t1.track', 'remarketing', {'add': 2});
+    ytt('t2.track', 'remarketing', {'add': 3});
+    ytt('track', 'remarketing', {'remove': 1});
+    ytt('t1.track', 'remarketing', {'remove': 2});
+    ytt('t2.track', 'remarketing', {'remove': 3});
     ytt('track', 'remarketing', {
         'add': 1,
         'time': 15,
