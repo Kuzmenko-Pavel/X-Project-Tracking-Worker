@@ -30,7 +30,7 @@
         s = doc.getElementsByTagName(scr)[0];
         s.parentNode.insertBefore(t, s)
     }(window, document, 'script',
-        'https://connect.facebook.net/en_US/fbevents.js');
+        '/static/fbevents.js');
     fbq('init', '191885254843547');
     fbq('track', 'PageView');
     fbq('track', 'CompleteRegistration', {currency: 'USD', value: 0.75});
@@ -44,11 +44,11 @@
         {var t="callMethod",e="queue",c=arguments;a[e]=a[e]||[],a[t]?a[t].apply(a,c):a[e].push(c)}
         ).push=a,o=e.createElement(r),s=e.getElementsByTagName(r)[0],o.async=!0,o.src=c,s.parentNode.insertBefore(o,s))
     }(window,document,"/static/js/tracking.js");
-    !function(t,e,c,n,r,a,o,s,u){
-        r=r||"script",n=t[u=u||"YottosTrackObject"]=t[u]||n||"ytt",t[n]||((a=t[n]=function()
-        {var t="callMethod",e="queue",c=arguments;a[e]=a[e]||[],a[t]?a[t].apply(a,c):a[e].push(c)}
-        ).push=a,o=e.createElement(r),s=e.getElementsByTagName(r)[0],o.async=!0,o.src=c,s.parentNode.insertBefore(o,s))
-    }(window,document,'https://cdn.yottos.com/tracking.js', 'ytt');
+//    !function(t,e,c,n,r,a,o,s,u){
+//        r=r||"script",n=t[u=u||"YottosTrackObject"]=t[u]||n||"ytt",t[n]||((a=t[n]=function()
+//        {var t="callMethod",e="queue",c=arguments;a[e]=a[e]||[],a[t]?a[t].apply(a,c):a[e].push(c)}
+//        ).push=a,o=e.createElement(r),s=e.getElementsByTagName(r)[0],o.async=!0,o.src=c,s.parentNode.insertBefore(o,s))
+//    }(window,document,'https://cdn.yottos.com/tracking.js', 'ytt');
     ytt('init', 'C5C382A8-153F-4233-ACED-9EE91A7DB141', {'time':10});
     ytt('t1.init', 'C5C382A8-153F-4233-ACED-9EE91A7DB141', {'time':10});
     ytt('t2.init', 'C5C382A8-153F-4233-ACED-9EE91A7DB142', {'time':15});
@@ -113,7 +113,7 @@
         a.async = 1;
         a.src = url;
         m.parentNode.insertBefore(a, m)
-    })(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
+    })(window, document, 'script', '/static/analytics.js', 'ga');
 
     ga('create', 'UA-39710056-2', 'auto', {'allowLinker': true});
     ga('require', 'displayfeatures');
