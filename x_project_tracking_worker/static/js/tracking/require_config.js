@@ -3,5 +3,14 @@
  */
 require.config({
     paths: {
-    }
+        underscore: './underscore'
+    },
+    shim: {
+        underscore: {
+            exports: '_'
+        }
+    },
+    deps: [
+        'underscore'
+    ]
 });

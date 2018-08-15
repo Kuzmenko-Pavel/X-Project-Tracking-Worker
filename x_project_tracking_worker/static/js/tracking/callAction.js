@@ -3,7 +3,7 @@
  */
 define([], function () {
     var callAction = function (action){
-        if (this.actions[action[1]]){
+        if (action && action[1] && this.actions[action[1]]){
                this.actions[action[1]].call(this, action[0], action[2], action[3]);
         }
     };

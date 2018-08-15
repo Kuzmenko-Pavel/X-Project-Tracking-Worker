@@ -3,11 +3,13 @@
  */
 require([
     './actions',
+    './track_actions',
     './callAction',
     './callMethod',
     './processing'
 ], function (
     actions,
+    track_actions,
     callAction,
     callMethod,
     processing
@@ -19,6 +21,7 @@ require([
         };
         tracker.trakers = {};
         tracker.actions = actions;
+        tracker.track_actions = track_actions;
         tracker.plugins = {};
         tracker.callAction = callAction;
         tracker.callMethod = callMethod;
