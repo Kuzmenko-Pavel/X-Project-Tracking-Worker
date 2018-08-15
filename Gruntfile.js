@@ -77,7 +77,7 @@ module.exports = function (grunt) {
                                 if_return: true,
                                 join_vars: true,
                                 drop_console: true,
-                                passes: 3
+                                passes: 5
                             },
                             warnings: true,
                             verbose: true,
@@ -87,8 +87,6 @@ module.exports = function (grunt) {
                                 sort: true,
                                 eval: true,
                                 props: true
-
-
                             },
                             ie8: true
                         },

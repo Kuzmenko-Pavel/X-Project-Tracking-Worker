@@ -14,10 +14,10 @@ require([
     callMethod,
     processing
 ) {
-    (function(win){
-        var y = win['YottosTrackObject'] || 'ytt';
-        var tracker = win[y] || function(){
-           this.callMethod(arguments);
+    (function(){
+        var y = window['YottosTrackObject'] || 'ytt';
+        var tracker = window[y] || function(){
+           tracker.callMethod(arguments);
         };
         tracker.trakers = {};
         tracker.actions = actions;
@@ -27,5 +27,5 @@ require([
         tracker.callMethod = callMethod;
         tracker.processing = processing;
         tracker.processing();
-    })(window);
+    })();
 });
