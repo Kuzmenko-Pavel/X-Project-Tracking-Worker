@@ -26,7 +26,7 @@ _**Все значения идентификаторов можно получ�
             {var t="callMethod",e="queue",c=arguments;a[e]=a[e]||[],a[t]?a[t].apply(a,c):a[e].push(c)}
             ).push=a,o=e.createElement(r),s=e.getElementsByTagName(r)[0],o.async=!0,o.src=c,s.parentNode.insertBefore(o,s))
         }(window,document,'https://cdn.yottos.com/tracking.js');
-        ytt('init', '00000000-0000-0000-0000-000000000000');
+        ytt('init', '00000000-0000-0000-0000-000000000000', {'time': 30});
         ytt('track', 'remarketing', {'add': 1});
         </script>
         <!-- End Yottos Tracking Code -->
