@@ -245,3 +245,7 @@ typings/
 .yarn-integrity
 
 # dotenv environment variables file
+### Jekyll template
+_site/
+.sass-cache/
+.jekyll-metadata
