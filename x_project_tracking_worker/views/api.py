@@ -16,6 +16,10 @@ class ApiView(web.View):
         query = self.request.query
         post = await self.request.post()
         account_id = post.get('ac', query.get('ac', ''))
+        title = post.get('title', query.get('title', ''))
+        url = post.get('url', query.get('url', ''))
+        referrer = post.get('referrer', query.get('referrer', ''))
+        context = post.get('context', query.get('context', ''))
         gender = post.get('gender', query.get('gender', 'n'))
         cost = post.get('cost', query.get('cost', 0))
         time = post.get('time', query.get('time', '356'))
@@ -52,7 +56,11 @@ class ApiView(web.View):
             'gender': gender,
             'cost': cost,
             'time': time,
-            'offer_id': offer_id
+            'offer_id': offer_id,
+            'title': title,
+            'url': url,
+            'referrer': referrer,
+            'context': context
         }
         offer_exists = False
         try:
