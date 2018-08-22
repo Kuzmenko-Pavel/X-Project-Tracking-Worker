@@ -428,7 +428,8 @@ function FBHistory(){
         'cd[referrer]': '{{referrer}}',
         'cd[account]': '{{account_id}}',
         ec: 1,
-        o: 60
+        o: 60,
+        noscript: 1
 
 
     };
@@ -450,6 +451,8 @@ function FBHistory(){
             a.push('cd[content_ids]' + "=" + encodeURIComponent(offer_id + '...' + ac_id));
             a.push('cd[content_name]' + "=" + encodeURIComponent('{{title}}'));
             a.push('cd[content_category]' + "=" + encodeURIComponent('{{context}}'));
+            a.push('cd[value]' + "=" + encodeURIComponent('1.0'));
+            a.push('cd[currency]' + "=" + encodeURIComponent('UAH'));
         }
         return 'https://www.facebook.com/tr/?' + a.join("&");
     };
