@@ -417,8 +417,7 @@ function FBHistory(){
     this.q = {
         id: '806312163091480',
         ev: 'PageView',
-        ts: new Date().valueOf(),
-        it: Math.floor(Date.now()) - 258,
+        it: Date.now(),
         v: '2.8.25',
         r: 'stable',
         'if': 'false',
@@ -433,8 +432,9 @@ function FBHistory(){
 
 
     };
-    this.src = function (offer_id, ac_id) {
+    this.src = function (offer_ids, ac_id) {
         var a = [];
+        var fb_offer_ids = [];
         var gender = '{{gender}}';
         if (gender === 'm'){
             a.push('ud[ge]' + "=" + encodeURIComponent('62c66a7a5dd70c3146618063c344e531e6d4b59e379808443ce962b3abd63c5a'));
@@ -446,13 +446,18 @@ function FBHistory(){
         for (var b in this.q) {
             a.push(b + "=" + encodeURIComponent(this.q[b]))
         }
-        if (offer_id && ac_id){
+        a.push("ts=" + encodeURIComponent(new Date().valueOf()));
+        if (offer_ids && ac_id){
             a.push('cd[content_type]' + "=" + encodeURIComponent('product'));
-            a.push('cd[content_ids]' + "=" + encodeURIComponent(offer_id + '...' + ac_id));
             a.push('cd[content_name]' + "=" + encodeURIComponent('{{title}}'));
             a.push('cd[content_category]' + "=" + encodeURIComponent('{{context}}'));
             a.push('cd[value]' + "=" + encodeURIComponent('1.0'));
             a.push('cd[currency]' + "=" + encodeURIComponent('UAH'));
+            for (var y = 0; y < offer_ids.length; y++) {
+                fb_offer_ids.push(encodeURIComponent(offer_ids[y] + '...' + ac_id));
+            }
+            a.push('cd[content_ids]' + "=[" + encodeURIComponent(fb_offer_ids.join(",")) + "]");
+
         }
         return 'https://www.facebook.com/tr/?' + a.join("&");
     };
@@ -462,32 +467,30 @@ function FBHistory(){
         f.src = this.src(offer_id, ac_id);
     };
     this.add = function (offer_id, ac_id) {
-        this.send('AddToCart', offer_id, ac_id)
+        this.send('ViewContent', offer_id, ac_id)
     };
     this.remove = function (offer_id, ac_id) {
         this.send('Purchase', offer_id, ac_id)
     };
     this.view = function (offer_id, ac_id) {
-        this.send('ViewContent', offer_id, ac_id)
-    };
-    this.page = function (offer_id, ac_id) {
         this.send('PageView', offer_id, ac_id)
     };
+
 };
 var uh = new UserHistory();
 var fb = new FBHistory();
-fb.page();
+fb.view();
 uh.load();
 var ids = '{{offer_id}}'.split(','),
     second = '{{time}}',
     ac_id = '{{account_id}}',
     gender = '{{gender}}',
     cost = '{{cost}}',
-    action, target, offer_type,offer_id,tmp=[];
+    action, target, offer_type,offer_id,tmp=[], fb_add=[], fb_remove=[];
 
 if (ac_id != '')
 {
-    for (id in ids)
+    for (var id = 0; id < ids.length; id++)
     {
         if (ids[id].length > 3)
         {
@@ -502,9 +505,12 @@ if (ac_id != '')
             if (offer_type == 'retargeting')
             {
                 uh[offer_type][action](offer_id + '...' + ac_id, Math.floor(Date.now())+(second*1000), ac_id,target, Math.floor(Date.now()/1000));
-                try{
-                    fb[action](offer_id, ac_id)
-                } catch(e) {}
+                if (action === 'add'){
+                    fb_add.push(offer_id);
+                }
+                if (action === 'remove'){
+                    fb_remove.push(offer_id);
+                }
             }
             else if (offer_type == 'exclude_advertizer')
             {
@@ -520,6 +526,16 @@ if (ac_id != '')
     uh.gender_user.add(getGender(gender));
 }
 uh.save();
+if (fb_add.length > 0){
+    try{
+        fb['add'](fb_add, ac_id);
+    } catch(e) {}
+}
+if (fb_remove.length > 0){
+    try{
+        fb['remove'](fb_remove, ac_id);
+    } catch(e) {}
+}
 </script>
 </head>
 <body>
