@@ -34,7 +34,7 @@ def init(loop, argv):
     if app['config']['debug']['console']:
         aiohttp_debugtoolbar.setup(app)
     init_templates(app)
-    app.on_startup.append(init_db)
+    # app.on_startup.append(init_db)
     setup_routes(app)
     setup_middlewares(app)
 

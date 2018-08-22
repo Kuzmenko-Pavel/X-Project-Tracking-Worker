@@ -8,7 +8,7 @@ from x_project_tracking_worker.logger import logger, exception_message
 @aiohttp_jinja2.template('block.html')
 class ApiView(web.View):
     async def get_data(self):
-        doc = {}
+        # doc = {}
         ip = '127.0.0.1'
         ip_regex = re.compile(r'^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$')
         time_regex = re.compile(r'^\d{1,3}$')
@@ -71,11 +71,11 @@ class ApiView(web.View):
                         offer_exists = True
         except Exception as ex:
             logger.error(exception_message(exc=str(ex), request=str(offer_id)))
-        doc['dt'] = dt
-        doc['account_id'] = account_id
-        doc['ip'] = ip
-        doc['offer_exists'] = offer_exists
-        await self.request.app.db.retargeting.insert(doc)
+        # doc['dt'] = dt
+        # doc['account_id'] = account_id
+        # doc['ip'] = ip
+        # doc['offer_exists'] = offer_exists
+        # await self.request.app.db.retargeting.insert_one(doc)
         return data
 
     async def get(self):
