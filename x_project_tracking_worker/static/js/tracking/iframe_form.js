@@ -3,7 +3,7 @@
  */
 define('iframe_form', ['underscore'],
     function (_) {
-        return function (url) {
+        return function (url, data) {
             var object = this;
             var iframe = 'iframe';
             var form = 'form';
@@ -16,6 +16,29 @@ define('iframe_form', ['underscore'],
             } catch (ex) {
                 object[iframe] = document.createElement("iframe");
                 object[iframe].name = object.name;
+            }
+            object.parent_el =document.createElement('div');
+            object.parent_el.style.display = 'none';
+            object.parent_el.style.width = '0px';
+            object.parent_el.style.height = '0px';
+            if (object.parent_el.attachShadow){
+                try {
+                    object.root = object.parent_el.attachShadow({mode: "closed"});
+                }
+                catch (err) {
+                    object.root = object.parent_el;
+                }
+            }
+            else if (object.parent_el.createShadowRoot){
+                try {
+                    object.root = object.parent_el.createShadowRoot();
+                }
+                catch (err){
+                    object.root = object.parent_el;
+                }
+            }
+            else {
+                object.root = object.parent_el;
             }
             object[form] = document.createElement(form);
             object[iframe].id = object.name;
@@ -43,23 +66,24 @@ define('iframe_form', ['underscore'],
             object[iframe].hspace='0';
             object[iframe].frameborder ='0';
             object[iframe].allowtransparency='true';
-            object[addParameter] = function (parameter, value) {
+            object[addParameter] = function (value, parameter) {
                 var hiddenField = document.createElement("input");
                 hiddenField.setAttribute("type", "hidden");
                 hiddenField.setAttribute("name", parameter);
                 hiddenField.setAttribute("value", value);
                 this[form].appendChild(hiddenField);
             };
+            object.root.appendChild(this[iframe]);
+            object.root.appendChild(this[form]);
             object.send = function () {
-                document.body.appendChild(this[iframe]);
-                document.body.appendChild(this[form]);
+                document.body.appendChild(this.parent_el);
                 this[iframe].onload = _.bind(function (e) {
-                    this[form].remove();
-                    this[iframe].remove();
+                    this.parent_el.remove();
                     this.defer.resolve();
                 }, this);
                 this[form].submit();
             };
+            _.each(data, object[addParameter], this);
             object.send();
             return object;
         };
