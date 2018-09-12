@@ -1,9 +1,10 @@
 /**
  * Created by kuzmenko-pavel on 04.04.17.
  */
-define(['underscore'], function (_) {
+define(['underscore', './transport'], function (_, transport) {
     var track_actions = {};
-    track_actions['remarketing'] = function (tracker, data){
+    track_actions['remarketing'] = function (tracker, data, defer){
+        transport.call(this, defer, _.extend({}, tracker, data));
     };
     return track_actions;
 

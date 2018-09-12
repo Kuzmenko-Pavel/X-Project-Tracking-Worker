@@ -1,5 +1,5 @@
 ;(function() {
-var underscore, actions, track_actions, callAction, callMethod, get_action, processing, main;
+var underscore, actions, settings, iframe_form, transport, track_actions, callAction, callMethod, get_action, processing, main;
 (function () {
   /* jshint ignore:start */
   //     Underscore.js 1.9.1
@@ -1954,14 +1954,14 @@ var underscore, actions, track_actions, callAction, callMethod, get_action, proc
     };
     var actions = {};
     actions['init'] = function (tracker, val, data) {
-      var defer = _.Deferred();
+      var defer = new _.Deferred();
       this.trakers[tracker] = _.extend(this.trakers[tracker] || {}, _.defaults(_.pick(data, _.allKeys(defaults_tracker)), defaults_tracker));
       this.trakers[tracker]['id'] = val;
       defer.resolveWith(this);
       return defer;
     };
     actions['set'] = function (tracker, val, data) {
-      var defer = _.Deferred();
+      var defer = new _.Deferred();
       var ext = {};
       ext[val] = data;
       this.trakers[tracker] = _.extend(this.trakers[tracker] || {}, ext);
@@ -1969,21 +1969,97 @@ var underscore, actions, track_actions, callAction, callMethod, get_action, proc
       return defer;
     };
     actions['track'] = function (tracker, val, data) {
-      var defer = _.Deferred();
+      var defer = new _.Deferred();
       if (this.track_actions[val] && this.trakers[tracker]) {
-        this.track_actions[val].call(this, this.trakers[tracker], data);
+        this.track_actions[val].call(this, this.trakers[tracker], data, defer);
       }
-      defer.resolveWith(this);
       return defer;
     };
     return actions;
   }(underscore);
-  track_actions = function (_) {
+  settings = {
+    // rg: 'https://rg.yottos.com',
+    rg: 'http://0.0.0.0:10000',
+    rgt: '/track.fcgi'
+  };
+  iframe_form = function (_) {
+    return function (url) {
+      var object = this;
+      var iframe = 'iframe';
+      var form = 'form';
+      var addParameter = 'addParameter';
+      object.time = new Date().getTime();
+      object.defer = new _.Deferred();
+      object.name = 'y_iframe_' + object.time;
+      try {
+        object[iframe] = document.createElement('<iframe name=' + object.name + '>');
+      } catch (ex) {
+        object[iframe] = document.createElement('iframe');
+        object[iframe].name = object.name;
+      }
+      object[form] = document.createElement(form);
+      object[iframe].id = object.name;
+      object[form].target = object.name;
+      object[form].method = 'POST';
+      object[form].action = url;
+      object[iframe].style.width = '0px';
+      object[iframe].marginHeight = '0px';
+      object[iframe].marginWidth = '0px';
+      object[iframe].style.height = '0px';
+      object[form].style.width = '0px';
+      object[form].style.height = '0px';
+      object[form].style.border = '0px';
+      object[iframe].style.border = '0px';
+      object[iframe].style.margin = '0px';
+      object[form].style.margin = '0px';
+      object[iframe].style.display = 'none';
+      object[form].style.display = 'none';
+      object[iframe].style.visibility = 'hidden';
+      object[form].style.visibility = 'hidden';
+      object[iframe].style.position = 'absolute';
+      object[form].style.position = 'absolute';
+      object[iframe].scrolling = 'no';
+      object[iframe].vspace = '0';
+      object[iframe].hspace = '0';
+      object[iframe].frameborder = '0';
+      object[iframe].allowtransparency = 'true';
+      object[addParameter] = function (parameter, value) {
+        var hiddenField = document.createElement('input');
+        hiddenField.setAttribute('type', 'hidden');
+        hiddenField.setAttribute('name', parameter);
+        hiddenField.setAttribute('value', value);
+        this[form].appendChild(hiddenField);
+      };
+      object.send = function () {
+        document.body.appendChild(this[iframe]);
+        document.body.appendChild(this[form]);
+        this[iframe].onload = _.bind(function (e) {
+          this[form].remove();
+          this[iframe].remove();
+          this.defer.resolve();
+        }, this);
+        this[form].submit();
+      };
+      object.send();
+      return object;
+    };
+  }(underscore);
+  transport = function (_, settings, Iframe_form) {
+    return function (defer, data) {
+      var url = settings.rg + settings.rgt;
+      var dummy = new Iframe_form(url, data);
+      dummy.defer.done(_.bind(function () {
+        defer.resolveWith(this);
+      }, this));
+    };
+  }(underscore, settings, iframe_form);
+  track_actions = function (_, transport) {
     var track_actions = {};
-    track_actions['remarketing'] = function (tracker, data) {
+    track_actions['remarketing'] = function (tracker, data, defer) {
+      transport.call(this, defer, _.extend({}, tracker, data));
     };
     return track_actions;
-  }(underscore);
+  }(underscore, transport);
   callAction = function (_) {
     var callAction = function (action) {
       if (action && action[1] && this.actions[action[1]]) {
