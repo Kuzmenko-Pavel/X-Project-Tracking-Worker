@@ -69,6 +69,8 @@
     ytt('track', 'remarketing', {'remove': 1});
     ytt('t1.track', 'remarketing', {'remove': 2});
     ytt('t2.track', 'remarketing', {'remove': 3});
+    ytt('t2.track', 'remarketing', {'add': [1,2,3], 'remove': [4,5,6]});
+    ytt('t2.track', 'remarketing', {'gender': 0, 'add': ['1','2','3'], 'remove': ['4','5','6']});
 //    for (var i = 0; i < 10000; i++) {
 //        ytt('t1.track', 'remarketing', {'add': i});
 //        ytt('t2.track', 'remarketing', {'add': i});

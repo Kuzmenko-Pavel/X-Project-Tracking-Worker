@@ -1,4 +1,5 @@
 from aiohttp import web
+import ujson
 import re
 import aiohttp_jinja2
 from datetime import datetime
@@ -139,16 +140,17 @@ class ApiView2(web.View):
             except Exception as ex:
                 logger.error(exception_message(exc=str(ex), request=str(self.request._message)))
         data = {
-            'action': action,
-            'ip': ip,
-            'account_id': account_id,
-            'gender': gender,
-            'price': price,
-            'time': time,
-            'add': add,
-            'remove': remove
+            'js': ujson.dumps({
+                'action': action,
+                'ip': ip,
+                'account_id': account_id,
+                'gender': gender,
+                'price': price,
+                'time': time,
+                'add': add.split(','),
+                'remove': remove.split(',')
+            })
         }
-        print(data)
         return data
 
     async def get(self):

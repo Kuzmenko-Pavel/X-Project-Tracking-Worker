@@ -5,12 +5,12 @@ define([
         './../underscore',
         './../json3',
         './test',
-        './fixed_queue',
-        './exclude_offers',
+        // './fixed_queue',
+        // './exclude_offers',
         './retargeting_offers',
-        './gender_account',
+        // './gender_account',
         './gender_user',
-        './cost_account',
+        // './cost_account',
         './cost_user'
         // './activity_account',
         // './activity_user'
@@ -30,6 +30,60 @@ define([
         // ActivityUser
     ) {
         var prototype = 'prototype';
+        var getGender= function(val){
+            if (val === 'm')
+            {
+                return 1;
+            }
+            else if (val === 'w')
+            {
+                return 2;
+            }
+            else
+            {
+                return 0;
+            }
+        };
+
+        var costRange= function(val){
+            val = Number(val);
+            if (val>0 && val <= 2500)
+            {
+                return 1;
+            }
+            else if (val>2500 && val <= 4500)
+            {
+                return 2;
+            }
+            else if (val>4500 && val <= 9000)
+            {
+                return 3;
+            }
+            else if (val>9000 && val <= 14000)
+            {
+                return 4;
+            }
+            else if (val>14000 && val <= 16500)
+            {
+                return 5;
+            }
+            else if (val>16500 && val <= 19000)
+            {
+                return 6;
+            }
+            else if (val>19000 && val <= 25000)
+            {
+                return 7;
+            }
+            else if (val>25001)
+            {
+                return 8;
+            }
+            else
+            {
+                return 0;
+            }
+        };
         var UserHistory = function () {
             // this.searchengines = new FixedQueue(3);
             // this.context = new FixedQueue(3);
@@ -110,6 +164,36 @@ define([
                 ) {
                     localStorage.setItem(uh_name, JSON.stringify(this[uh_name]));
                 }, this);
+                return true;
+            }
+            return false;
+        };
+        UserHistory[prototype].processing = function (data) {
+            if (test()) {
+                this.load();
+                this.cost_user.add(costRange(data['price']));
+                this.gender_user.add(getGender(data['gender']));
+                var ac_id = data['account_id'];
+                var second = data['time'];
+                _.each(data['add'] || [], function (
+                            element,
+                            index,
+                            list
+                        ) {
+                            if (element.length > 0){
+                                this.retargeting.add(element + '...' + ac_id, Math.floor(Date.now())+(second*1000), ac_id,'', Math.floor(Date.now()/1000));
+                            }
+                }, this);
+                _.each(data['remove'] || [], function (
+                            element,
+                            index,
+                            list
+                        ) {
+                            if (element.length > 0){
+                                this.retargeting.remove(element + '...' + ac_id, Math.floor(Date.now())+(second*1000), ac_id,'', Math.floor(Date.now()/1000));
+                            }
+                }, this);
+                this.save();
                 return true;
             }
             return false;

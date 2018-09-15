@@ -1,5 +1,5 @@
 ;(function() {
-var underscore, json3, user_history_test, user_history_fixed_queue, user_history_exclude_offers, user_history_retargeting_offers, user_history_gender_account, user_history_gender_user, user_history_cost_account, user_history_cost_user, user_history_main, loader, main;
+var underscore, json3, user_history_test, user_history_retargeting_offers, user_history_gender_user, user_history_cost_user, user_history_main, loader, main;
 (function () {
   /* jshint ignore:start */
   //     Underscore.js 1.9.1
@@ -1999,134 +1999,6 @@ var underscore, json3, user_history_test, user_history_fixed_queue, user_history
       return result;
     };
   }(json3);
-  user_history_fixed_queue = function (_) {
-    var prototype = 'prototype';
-    var FixedArray = function () {
-    };
-    FixedArray[prototype] = Function[prototype];
-    FixedArray[prototype].add = function (arg1, arg2) {
-      arg2 = arg2 || false;
-      if (arg2) {
-        if (arg1 < this.fixedSize) {
-          this[arg1] = arg2;
-        }
-      } else {
-        if (this.indexOf(arg1) < 0) {
-          this.push(arg1);
-        }
-      }
-      if (this.length <= this.fixedSize) {
-        return;
-      }
-      Array[prototype].splice.call(this, 0, this.length - this.fixedSize);
-    };
-    FixedArray[prototype].load = function (arg1, arg2) {
-      arg2 = arg2 || false;
-      if (arg2) {
-        if (arg1 < this.fixedSize) {
-          this[arg1] = arg2;
-        }
-      } else {
-        if (this.indexOf(arg1) < 0) {
-          this.push(arg1);
-        }
-      }
-      if (this.length <= this.fixedSize) {
-        return;
-      }
-      Array[prototype].splice.call(this, 0, this.length - this.fixedSize);
-    };
-    FixedArray[prototype].get = function () {
-      Array[prototype].splice.call(this, 0, this.length - this.fixedSize);
-      return this.join(';');
-    };
-    FixedArray[prototype].clear = function () {
-      _.each(this || {}, function (value, key, uh) {
-        if (!_.isUndefined(value) && !_.isFunction(value)) {
-          delete uh[key];
-        }
-      });
-    };
-    var FixedQueue = function (size) {
-      FixedArray[prototype].fixedSize = size;
-      var queue = new FixedArray();
-      return queue;
-    };
-    return FixedQueue;
-  }(underscore);
-  user_history_exclude_offers = function (_) {
-    var prototype = 'prototype';
-    var ExcludeOffers = function (invert, counter) {
-      // var invert_ = Boolean(invert || false);
-      // var counter_ = Boolean(counter || false);
-      this.invert = function () {
-        return false;  // return invert_ || false;
-      };
-      this.counter = function () {
-        return false;  // return counter_ || false;
-      };
-    };
-    ExcludeOffers[prototype].add = function (guid, countViews) {
-      countViews = countViews || 1;
-      if (_.isNumber(this[guid])) {
-        if (this.invert()) {
-          this[guid] = ++this[guid];
-        } else {
-          if (this[guid] > 0) {
-            this[guid] = --this[guid];
-          } else {
-            this[guid] = 0;
-          }
-        }
-      } else {
-        if (this.invert()) {
-          this[guid] = countViews;
-        } else {
-          this[guid] = countViews - 1;
-        }
-      }
-    };
-    ExcludeOffers[prototype].load = function (guid, countViews) {
-      this[guid] = countViews;
-    };
-    ExcludeOffers[prototype].clear = function () {
-      _.each(this || {}, function (value, key, uh) {
-        if (!_.isUndefined(value) && !_.isFunction(value)) {
-          delete uh[key];
-        }
-      });
-    };
-    ExcludeOffers[prototype].get = function () {
-      var keys = [];
-      _.each(this || {}, function (value, key) {
-        if (this.invert()) {
-          if (value > 0) {
-            if (this.counter()) {
-              keys.push([
-                key.replace(/\D/g, ''),
-                value
-              ]);
-            } else {
-              keys.push(key.replace(/\D/g, ''));
-            }
-          }
-        } else {
-          if (value <= 0) {
-            if (this.counter()) {
-              keys.push([
-                key.replace(/\D/g, ''),
-                value
-              ]);
-            } else {
-              keys.push(key.replace(/\D/g, ''));
-            }
-          }
-        }
-      }, this);
-      return keys;
-    };
-    return ExcludeOffers;
-  }(underscore);
   user_history_retargeting_offers = function (_) {
     var prototype = 'prototype';
     var RetargetingOffers = function () {
@@ -2201,57 +2073,6 @@ var underscore, json3, user_history_test, user_history_fixed_queue, user_history
     };
     return RetargetingOffers;
   }(underscore);
-  user_history_gender_account = function (_) {
-    var prototype = 'prototype';
-    var GenderAccount = function () {
-    };
-    GenderAccount[prototype].add = function (guid, val) {
-      var hit_log = new Array(0, 0, 0);
-      if (_.isUndefined(this[guid])) {
-        hit_log[val] += 1;
-        this[guid] = [
-          val,
-          hit_log
-        ];
-      } else {
-        hit_log = this[guid][1];
-        hit_log[val] += 1;
-        hit_log[0] = 1;
-        this[guid] = [
-          _.indexOf(hit_log, _.max(hit_log)),
-          hit_log
-        ];
-      }
-      if (this[guid][0] < 0) {
-        this[guid][0] = 0;
-      }
-    };
-    GenderAccount[prototype].get = function () {
-      var res = [];
-      _.each(this, function (element, name, uh) {
-        if (!_.isEmpty(element)) {
-          res.push([name + '~' + element[0]]);
-        }
-      });
-      return res.join(';');
-    };
-    GenderAccount[prototype].load = function (guid, arg1) {
-      if (_.isArray(arg1)) {
-        this[guid] = [
-          arg1[0],
-          arg1[1]
-        ];
-      }
-    };
-    GenderAccount[prototype].clear = function () {
-      _.each(this || {}, function (value, key, uh) {
-        if (!_.isUndefined(value) && !_.isFunction(value)) {
-          delete uh[key];
-        }
-      });
-    };
-    return GenderAccount;
-  }(underscore);
   user_history_gender_user = function (_) {
     var prototype = 'prototype';
     var GenderUser = function () {
@@ -2287,57 +2108,6 @@ var underscore, json3, user_history_test, user_history_fixed_queue, user_history
     };
     return GenderUser;
   }(underscore);
-  user_history_cost_account = function (_) {
-    var prototype = 'prototype';
-    var CostAccount = function () {
-    };
-    CostAccount[prototype].add = function (guid, val) {
-      var hit_log = new Array(0, 0, 0, 0, 0, 0, 0, 0, 0);
-      if (_.isUndefined(this[guid])) {
-        hit_log[val] += 1;
-        this[guid] = [
-          val,
-          hit_log
-        ];
-      } else {
-        hit_log = this[guid][1];
-        hit_log[val] += 1;
-        hit_log[0] = 1;
-        this[guid] = [
-          _.indexOf(hit_log, _.max(hit_log)),
-          hit_log
-        ];
-      }
-      if (this[guid][0] < 0) {
-        this[guid][0] = 0;
-      }
-    };
-    CostAccount[prototype].get = function () {
-      var res = [];
-      _.each(this, function (element, name, uh) {
-        if (!_.isEmpty(element)) {
-          res.push([name + '~' + element[0]]);
-        }
-      });
-      return res.join(';');
-    };
-    CostAccount[prototype].load = function (guid, arg1) {
-      if (_.isArray(arg1)) {
-        this[guid] = [
-          arg1[0],
-          arg1[1]
-        ];
-      }
-    };
-    CostAccount[prototype].clear = function () {
-      _.each(this || {}, function (value, key, uh) {
-        if (!_.isUndefined(value) && !_.isFunction(value)) {
-          delete uh[key];
-        }
-      });
-    };
-    return CostAccount;
-  }(underscore);
   user_history_cost_user = function (_) {
     var prototype = 'prototype';
     var CostUser = function () {
@@ -2367,16 +2137,44 @@ var underscore, json3, user_history_test, user_history_fixed_queue, user_history
       this[guid] = arg1;
     };
     CostUser[prototype].clear = function () {
-      _.each(this || {}, function (value, key, uh) {
-        if (!_.isUndefined(value) && !_.isFunction(value)) {
-          delete uh[key];
-        }
-      });
+      this.hit_log = new Array(0, 0, 0, 0, 0, 0, 0, 0, 0);
+      this.cost = void 0;
     };
     return CostUser;
   }(underscore);
   user_history_main = function (_, JSON, test, RetargetingOffers, GenderUser, CostUser) {
     var prototype = 'prototype';
+    var getGender = function (val) {
+      if (val === 'm') {
+        return 1;
+      } else if (val === 'w') {
+        return 2;
+      } else {
+        return 0;
+      }
+    };
+    var costRange = function (val) {
+      val = Number(val);
+      if (val > 0 && val <= 2500) {
+        return 1;
+      } else if (val > 2500 && val <= 4500) {
+        return 2;
+      } else if (val > 4500 && val <= 9000) {
+        return 3;
+      } else if (val > 9000 && val <= 14000) {
+        return 4;
+      } else if (val > 14000 && val <= 16500) {
+        return 5;
+      } else if (val > 16500 && val <= 19000) {
+        return 6;
+      } else if (val > 19000 && val <= 25000) {
+        return 7;
+      } else if (val > 25001) {
+        return 8;
+      } else {
+        return 0;
+      }
+    };
     var UserHistory = function () {
       // this.searchengines = new FixedQueue(3);
       // this.context = new FixedQueue(3);
@@ -2452,6 +2250,28 @@ var underscore, json3, user_history_test, user_history_fixed_queue, user_history
       }
       return false;
     };
+    UserHistory[prototype].processing = function (data) {
+      if (test()) {
+        this.load();
+        this.cost_user.add(costRange(data['price']));
+        this.gender_user.add(getGender(data['gender']));
+        var ac_id = data['account_id'];
+        var second = data['time'];
+        _.each(data['add'] || [], function (element, index, list) {
+          if (element.length > 0) {
+            this.retargeting.add(element + '...' + ac_id, Math.floor(Date.now()) + second * 1000, ac_id, '', Math.floor(Date.now() / 1000));
+          }
+        }, this);
+        _.each(data['remove'] || [], function (element, index, list) {
+          if (element.length > 0) {
+            this.retargeting.remove(element + '...' + ac_id, Math.floor(Date.now()) + second * 1000, ac_id, '', Math.floor(Date.now() / 1000));
+          }
+        }, this);
+        this.save();
+        return true;
+      }
+      return false;
+    };
     // UserHistory[prototype].exclude_clean = function (cl) {
     //     var k = ['exclude'];
     //     if (cl) {
@@ -2514,7 +2334,7 @@ var underscore, json3, user_history_test, user_history_fixed_queue, user_history
     //     return keys;
     // };
     return new UserHistory();
-  }(underscore, json3, user_history_test, user_history_fixed_queue, user_history_exclude_offers, user_history_retargeting_offers);
+  }(underscore, json3, user_history_test, user_history_retargeting_offers, user_history_gender_user, user_history_cost_user);
   loader = function (user_history) {
     var Loader = function () {
       this.loader = function () {
