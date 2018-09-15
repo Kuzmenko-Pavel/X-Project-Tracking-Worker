@@ -7,6 +7,7 @@ define(['underscore'], function (_) {
                return this.actions[action[1]].call(this, action[0], action[2], action[3]);
 
         }
+        return new _.Deferred().resolveWith(this);
     };
     return callAction;
 

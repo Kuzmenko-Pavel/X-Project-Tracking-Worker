@@ -1,10 +1,10 @@
 /**
  * Created by kuzmenko-pavel on 04.04.17.
  */
-define([], function () {
+define(['./user_history/main'], function (user_history) {
     var Loader = function (){
         this.loader = function () {
-            console.log('loader');
+            this.uh = user_history;
         };
     };
     return new Loader();

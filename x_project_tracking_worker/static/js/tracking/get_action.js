@@ -1,7 +1,7 @@
 /**
  * Created by kuzmenko-pavel on 04.04.17.
  */
-define([], function () {
+define(['underscore'], function (_) {
     var getAction = function (e){
         var tracker = 'default';
         var action = 'default';
@@ -11,6 +11,12 @@ define([], function () {
             var key = e[0];
             var val = e[1];
             var dat = e[2];
+            if (!_.isString(key) || !_.isString(val)){
+                return undefined;
+            }
+            if (_.isNaN(dat) || _.isNull(dat) || _.isUndefined(dat)){
+                return undefined;
+            }
             if (key){
                 key = key.split('.');
                 if (key.length === 1){

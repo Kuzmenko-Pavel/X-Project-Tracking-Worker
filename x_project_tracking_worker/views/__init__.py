@@ -1,3 +1,4 @@
 from .api import ApiView
+from .api import ApiView2
 
-__all__ = [ApiView, ]
+__all__ = [ApiView, ApiView2]

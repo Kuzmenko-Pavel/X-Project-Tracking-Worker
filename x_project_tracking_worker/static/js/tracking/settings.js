@@ -5,6 +5,6 @@ define('settings', [], function () {
     return {
         // rg: 'https://rg.yottos.com',
         rg: 'http://0.0.0.0:10000',
-        rgt: '/track.fcgi'
+        rgt: '/pixel/track'
     };
 });

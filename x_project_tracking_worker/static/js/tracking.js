@@ -1980,7 +1980,7 @@ var underscore, actions, settings, iframe_form, transport, track_actions, callAc
   settings = {
     // rg: 'https://rg.yottos.com',
     rg: 'http://0.0.0.0:10000',
-    rgt: '/track.fcgi'
+    rgt: '/pixel/track'
   };
   iframe_form = function (_) {
     return function (url, data) {
@@ -2043,6 +2043,9 @@ var underscore, actions, settings, iframe_form, transport, track_actions, callAc
       object[iframe].frameborder = '0';
       object[iframe].allowtransparency = 'true';
       object[addParameter] = function (value, parameter) {
+        if (_.isNull(value) || _.isUndefined(value) || _.isNaN(value)) {
+          return;
+        }
         var hiddenField = document.createElement('input');
         hiddenField.setAttribute('type', 'hidden');
         hiddenField.setAttribute('name', parameter);
@@ -2076,7 +2079,7 @@ var underscore, actions, settings, iframe_form, transport, track_actions, callAc
   track_actions = function (_, transport) {
     var track_actions = {};
     track_actions['remarketing'] = function (tracker, data, defer) {
-      transport.call(this, defer, _.extend({}, tracker, data));
+      transport.call(this, defer, _.extend({ action: 'remarketing' }, tracker, data));
     };
     return track_actions;
   }(underscore, transport);
@@ -2085,6 +2088,7 @@ var underscore, actions, settings, iframe_form, transport, track_actions, callAc
       if (action && action[1] && this.actions[action[1]]) {
         return this.actions[action[1]].call(this, action[0], action[2], action[3]);
       }
+      return new _.Deferred().resolveWith(this);
     };
     return callAction;
   }(underscore);
@@ -2099,7 +2103,7 @@ var underscore, actions, settings, iframe_form, transport, track_actions, callAc
     };
     return callMethod;
   }(underscore);
-  get_action = function () {
+  get_action = function (_) {
     var getAction = function (e) {
       var tracker = 'default';
       var action = 'default';
@@ -2109,6 +2113,12 @@ var underscore, actions, settings, iframe_form, transport, track_actions, callAc
         var key = e[0];
         var val = e[1];
         var dat = e[2];
+        if (!_.isString(key) || !_.isString(val)) {
+          return undefined;
+        }
+        if (_.isNaN(dat) || _.isNull(dat) || _.isUndefined(dat)) {
+          return undefined;
+        }
         if (key) {
           key = key.split('.');
           if (key.length === 1) {
@@ -2133,19 +2143,21 @@ var underscore, actions, settings, iframe_form, transport, track_actions, callAc
       }
     };
     return getAction;
-  }();
+  }(underscore);
   processing = function (_, getAction) {
     var processing = function () {
-      var action = this.callAction(getAction(this.queue.shift()));
-      if (action) {
-        action.done(function () {
-          console.log('DONE');
-          try {
-            this.processing();
-          } catch (ex) {
-            setTimeout(_.bind(this.processing, this), 0);
-          }
-        });
+      var arg = this.queue.shift();
+      if (arg) {
+        var action = this.callAction(getAction(arg));
+        if (action) {
+          action.done(function () {
+            try {
+              this.processing();
+            } catch (ex) {
+              setTimeout(_.bind(this.processing, this), 0);
+            }
+          });
+        }
       }
     };
     return processing;

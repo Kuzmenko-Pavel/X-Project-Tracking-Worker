@@ -67,6 +67,9 @@ define('iframe_form', ['underscore'],
             object[iframe].frameborder ='0';
             object[iframe].allowtransparency='true';
             object[addParameter] = function (value, parameter) {
+                if (_.isNull(value) || _.isUndefined(value)|| _.isNaN(value)){
+                    return;
+                }
                 var hiddenField = document.createElement("input");
                 hiddenField.setAttribute("type", "hidden");
                 hiddenField.setAttribute("name", parameter);
