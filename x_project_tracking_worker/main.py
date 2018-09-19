@@ -9,6 +9,7 @@ import aiohttp_debugtoolbar
 from trafaret_config import commandline
 
 from x_project_tracking_worker.db import init_db
+from x_project_tracking_worker.fb import init_fb
 from x_project_tracking_worker.templates import init_templates
 from x_project_tracking_worker.logger import logger, exception_message
 from x_project_tracking_worker.middlewares import setup_middlewares
@@ -35,6 +36,7 @@ def init(loop, argv):
         aiohttp_debugtoolbar.setup(app)
     init_templates(app)
     # app.on_startup.append(init_db)
+    app.on_startup.append(init_fb)
     setup_routes(app)
     setup_middlewares(app)
 

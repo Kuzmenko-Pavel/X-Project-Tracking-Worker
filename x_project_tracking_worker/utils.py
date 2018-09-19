@@ -18,4 +18,8 @@ TRAFARET_CONF = T.Dict({
         T.Key('status', default=False): T.Bool(),
         T.Key('console', default=False): T.Bool(),
     }),
+    T.Key('fb_pixel'): T.Dict({
+        T.Key('default'): T.String(),
+        T.Key('relation'): T.Dict().allow_extra('*')
+    })
 })

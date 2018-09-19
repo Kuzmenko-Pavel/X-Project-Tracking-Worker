@@ -10,3 +10,9 @@ mongo:
 debug:
   status: False
   console: False
+
+fb_pixel:
+  default: '806312163091480'
+  relation:
+     default: '806312163091480'
+#     1F13B4C1-CD07-46AC-A392-F40082BC41C3: '1880613648682991'

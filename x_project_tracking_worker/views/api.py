@@ -17,6 +17,7 @@ class ApiView(web.View):
         query = self.request.query
         post = await self.request.post()
         account_id = post.get('ac', query.get('ac', ''))
+        pixel_id = self.request.app.fb_pixel[account_id]
         title = post.get('title', query.get('title', ''))
         url = post.get('url', query.get('url', ''))
         referrer = post.get('referrer', query.get('referrer', ''))
@@ -54,6 +55,7 @@ class ApiView(web.View):
         data = {
             'ip': ip,
             'account_id': account_id,
+            'pixel_id': pixel_id,
             'gender': gender,
             'cost': cost,
             'time': time,
