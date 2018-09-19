@@ -421,10 +421,10 @@ function FBHistory(){
         v: '2.8.25',
         r: 'stable',
         'if': 'false',
-        rl: '{{referrer}}',
-        dl: '{{url}}',
-        'cd[url]': '{{url}}',
-        'cd[referrer]': '{{referrer}}',
+        rl: '{{referrer|safe}}',
+        dl: '{{url|safe}}',
+        'cd[url]': '{{url|safe}}',
+        'cd[referrer]': '{{referrer|safe}}',
         'cd[account]': '{{account_id}}',
         ec: 1,
         o: 60,
@@ -454,7 +454,7 @@ function FBHistory(){
             a.push('cd[value]' + "=" + encodeURIComponent('1.0'));
             a.push('cd[currency]' + "=" + encodeURIComponent('UAH'));
             for (var y = 0; y < offer_ids.length; y++) {
-                fb_offer_ids.push(encodeURIComponent(offer_ids[y] + '...' + ac_id));
+                fb_offer_ids.push('"' + encodeURIComponent(offer_ids[y] + '...' + ac_id) + '"');
             }
             a.push('cd[content_ids]' + "=[" + encodeURIComponent(fb_offer_ids.join(",")) + "]");
 
@@ -505,11 +505,13 @@ if (ac_id != '')
             if (offer_type == 'retargeting')
             {
                 uh[offer_type][action](offer_id + '...' + ac_id, Math.floor(Date.now())+(second*1000), ac_id,target, Math.floor(Date.now()/1000));
-                if (action === 'add'){
+                if(offer_id.length > 0){
+                    if (action === 'add'){
                     fb_add.push(offer_id);
-                }
-                if (action === 'remove'){
-                    fb_remove.push(offer_id);
+                    }
+                    if (action === 'remove'){
+                        fb_remove.push(offer_id);
+                    }
                 }
             }
             else if (offer_type == 'exclude_advertizer')
@@ -539,8 +541,5 @@ if (fb_remove.length > 0){
 </script>
 </head>
 <body>
-<script>
-console.log('load');
-</script>
 </body>
 </html>
