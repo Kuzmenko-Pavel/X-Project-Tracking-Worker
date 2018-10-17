@@ -15,6 +15,16 @@ define(['underscore'], function (_) {
             this.trakers[tracker] || {}, _.defaults(_.pick(data, _.allKeys(defaults_tracker)), defaults_tracker)
         );
         this.trakers[tracker]['id'] = val;
+        if (data['set'] && _.isObject(data['set'])){
+            _.each(data['set'], function (value, key) {
+                this.callMethod(tracker + '.set', key, value);
+            }, this);
+        }
+        if (data['track'] && _.isObject(data['track'])){
+            _.each(data['track'], function (value, key) {
+                this.callMethod(tracker + '.track', key, value);
+            }, this);
+        }
         defer.resolveWith(this);
         return defer;
     };
