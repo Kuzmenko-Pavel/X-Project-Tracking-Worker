@@ -1,9 +1,11 @@
 from aiohttp import web
+from aiojobs.aiohttp import spawn
 import ujson
 import re
 import aiohttp_jinja2
 from datetime import datetime
 from x_project_tracking_worker.logger import logger, exception_message
+from x_project_tracking_worker.redis import stored
 
 
 @aiohttp_jinja2.template('block.html')
@@ -153,6 +155,12 @@ class ApiView2(web.View):
                 'remove': remove.split(',')
             })
         }
+        if remove:
+            store_data = {
+                'account_id': account_id,
+                'ids': remove.split(',')
+            }
+            await spawn(self.request, stored(self.request.app.redis_pool, store_data))
         return data
 
     async def get(self):

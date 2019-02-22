@@ -28,6 +28,8 @@ install_requires = ['aiohttp',
                     'uvloop',
                     'cchardet',
                     'aiohttp_debugtoolbar',
+                    'aioredis',
+                    'aiojobs==0.2.1'
                     ]
 
 setup(

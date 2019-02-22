@@ -12,6 +12,10 @@ TRAFARET_CONF = T.Dict({
                     'retargeting': T.String()
                 })
         }),
+    T.Key('redis'):
+        T.Dict({
+            'uri': T.String(),
+        }),
     T.Key('host'): T.Regexp(primitive_ip_regexp),
     T.Key('port'): T.Int(),
     T.Key('debug'): T.Dict({

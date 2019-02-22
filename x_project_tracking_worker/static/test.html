@@ -50,18 +50,18 @@
 //        ).push=a,o=e.createElement(r),s=e.getElementsByTagName(r)[0],o.async=!0,o.src=c,s.parentNode.insertBefore(o,s))
 //    }(window,document,'https://cdn.yottos.com/tracking.js', 'ytt');
     ytt('init', 'C5C382A8-153F-4233-ACED-9EE91A7DB141', {'time':10});
-    ytt('t1.init', 'C5C382A8-153F-4233-ACED-9EE91A7DB142', {
-            'time': 10,
-            'set': {
-                'gender': 1,
-                'time': 15
-            },
-            'track': {
-                'remarketing':{
-                    'add': 'id_offer'
-                }
-            }
-        });
+    // ytt('t1.init', 'C5C382A8-153F-4233-ACED-9EE91A7DB142', {
+    //         'time': 10,
+    //         'set': {
+    //             'gender': 1,
+    //             'time': 15
+    //         },
+    //         'track': {
+    //             'remarketing':{
+    //                 'add': 'id_offer'
+    //             }
+    //         }
+    //     });
 //    ytt('t1.init', 'C5C382A8-153F-4233-ACED-9EE91A7DB141', {'time':10});
 //    ytt('t2.init', 'C5C382A8-153F-4233-ACED-9EE91A7DB142', {'time':15});
 //    ytt('set', 'time', 12);
@@ -84,23 +84,29 @@
 //    ytt('t2.track', 'remarketing', {'add': [1,2,3], 'remove': [4,5,6]});
 //    ytt('t2.track', 'remarketing', {'gender': 0, 'add': ['1','2','3'], 'remove': ['4','5','6']});
 //    for (var i = 0; i < 10000; i++) {
-//        ytt('t1.track', 'remarketing', {'add': i});
-//        ytt('t2.track', 'remarketing', {'add': i});
+//        ytt('track', 'remarketing', {'remove': i});
 //    }
-//    ytt('track', 'remarketing', {
-//        'add': 1,
-//        'time': 15,
-//        'gender': 'm',
-//        'price' : 10000,
-//        'remove': 2
-//    });
-//    ytt('t1.track', 'remarketing', {
-//        'add': 1,
-//        'time': 15,
-//        'gender': 'm',
-//        'price' : 10000,
-//        'remove': 2
-//    });
+   ytt('track', 'remarketing', {
+       'add': 1,
+       'time': 15,
+       'gender': 'm',
+       'price' : 10000,
+       'remove': 2
+   });
+   ytt('track', 'remarketing', {
+       'add': 1,
+       'time': 15,
+       'gender': 'm',
+       'price' : 10000,
+       'remove': [2, 4, 5]
+   });
+   ytt('t1.track', 'remarketing', {
+       'add': 1,
+       'time': 15,
+       'gender': 'm',
+       'price' : 10000,
+       'remove': 2
+   });
 //    ytt('t2.track', 'remarketing', {
 //        'add': 1,
 //        'time': 15,

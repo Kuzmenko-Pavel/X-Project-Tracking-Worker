@@ -7,6 +7,9 @@ mongo:
   collection:
     retargeting: log.retargeting
 
+redis:
+  uri: redis://srv-13.yottos.com:6379/10?encoding=utf-8
+
 debug:
   status: False
   console: False
