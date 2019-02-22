@@ -1023,7 +1023,7 @@ if (!('some' in Array.prototype)) {
               if (term.length == 0 )
               {
                 term = b[1];
-              }
+              }  
           }
           if(b[0] == 'utm_content' ) {
               if (content.length == 0 )
@@ -1059,7 +1059,7 @@ if (!('some' in Array.prototype)) {
     {
         return '?rand=' + this.rand + this.get_utm();
     };
-    this.elf.action = 'http://0.0.0.0:10000/track.fcgi' + this.query();
+    this.elf.action = 'https://rg.yottos.com/track.fcgi' + this.query();
     this.send = function(){
         ;if (document.body != null)
         {

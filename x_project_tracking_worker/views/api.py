@@ -67,15 +67,31 @@ class ApiView(web.View):
             'referrer': referrer,
             'context': context
         }
-        offer_exists = False
-        try:
+        if account_id and offer_id:
+            remove = []
             for ids in offer_id.split(','):
-                tmp = ids.split('~')
-                if len(tmp) > 3:
-                    if tmp[1]:
-                        offer_exists = True
-        except Exception as ex:
-            logger.error(exception_message(exc=str(ex), request=str(offer_id)))
+                if len(ids) > 3:
+                    tmp = ids.split('~')
+                    if len(tmp) > 2:
+                        action = tmp[0]
+                        id_offer = tmp[1]
+                        if action == 'remove':
+                            remove.append(id_offer)
+            if remove:
+                store_data = {
+                    'account_id': account_id,
+                    'ids': remove
+                }
+                await spawn(self.request, stored(self.request.app.redis_pool, store_data))
+        # offer_exists = False
+        # try:
+        #     for ids in offer_id.split(','):
+        #         tmp = ids.split('~')
+        #         if len(tmp) > 3:
+        #             if tmp[1]:
+        #                 offer_exists = True
+        # except Exception as ex:
+        #     logger.error(exception_message(exc=str(ex), request=str(offer_id)))
         # doc['dt'] = dt
         # doc['account_id'] = account_id
         # doc['ip'] = ip
@@ -155,7 +171,7 @@ class ApiView2(web.View):
                 'remove': remove.split(',')
             })
         }
-        if remove:
+        if account_id and remove:
             store_data = {
                 'account_id': account_id,
                 'ids': remove.split(',')
