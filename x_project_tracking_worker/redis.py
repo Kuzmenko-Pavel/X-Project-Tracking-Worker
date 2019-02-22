@@ -22,8 +22,11 @@ async def stored(redis, data):
         for item in ids:
             try:
                 key = '%s::%s' % (str(account_id).strip(), str(item).strip())
+                key_exists = 'exists::%s' % str(account_id).strip()
                 pipe.incr(key)
+                pipe.set(key_exists, 1)
                 pipe.expire(key, time)
+                pipe.expire(key_exists, time)
             except Exception as e:
                 print(e)
         await pipe.execute()
