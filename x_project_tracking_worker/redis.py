@@ -14,7 +14,7 @@ async def close_redis(app):
 
 
 async def stored(redis, data):
-    time = 60 * 60 * 24
+    time = 60 * 60 * 24 * 3
     account_id = data.get('account_id')
     ids = data.get('ids', [])
     if account_id and ids:
