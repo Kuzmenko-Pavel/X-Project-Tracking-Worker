@@ -59,9 +59,22 @@ async def cookie_middleware(app, handler):
     return middleware
 
 
+async def disable_cache_middleware(app, handler):
+    async def middleware(request):
+        expiry_time = datetime.utcnow()
+        response = await handler(request)
+        response.headers["Cache-Control"] = "no-cache, must-revalidate"
+        response.headers["Pragma"] = "no-cache"
+        response.headers["Expires"] = expiry_time.strftime("%a, %d %b %Y %H:%M:%S GMT")
+        return response
+
+    return middleware
+
+
 def setup_middlewares(app):
     error_middleware = error_pages({404: handle_404,
                                     405: handle_405,
                                     500: handle_500})
     app.middlewares.append(error_middleware)
     app.middlewares.append(cookie_middleware)
+    app.middlewares.append(disable_cache_middleware)
