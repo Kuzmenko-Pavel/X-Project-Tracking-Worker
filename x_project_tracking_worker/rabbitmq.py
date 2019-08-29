@@ -23,9 +23,10 @@ async def amqp_publish(app, data):
     async with app.amqp.acquire() as channel:
         exchange = await channel.declare_exchange(app.amqp_exchange, aio_pika.ExchangeType.TOPIC, durable=True,
                                                   auto_delete=False, passive=False)
+        print(exchange)
         await exchange.publish(
             aio_pika.Message(data.encode()), app.amqp_routing_key,
         )
-        print(data)
+        print(app.amqp_exchange, data, app.amqp_routing_key)
 
 

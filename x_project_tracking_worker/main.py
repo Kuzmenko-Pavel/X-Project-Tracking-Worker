@@ -4,6 +4,8 @@ import asyncio
 import os
 import sys
 
+from x_project_tracking_worker.httpwriter_patch import patch_streamwriter
+patch_streamwriter()
 from aiohttp import web
 from aiojobs.aiohttp import setup as aiojobs_setup
 import aiohttp_debugtoolbar
