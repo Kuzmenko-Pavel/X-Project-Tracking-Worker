@@ -7,6 +7,7 @@ import aiohttp_jinja2
 from datetime import datetime
 from x_project_tracking_worker.logger import logger, exception_message
 from x_project_tracking_worker.redis import stored
+from x_project_tracking_worker.rabbitmq import amqp_publish
 
 
 PIXEL_PNG_DATA = base64.b64decode(
@@ -220,8 +221,13 @@ class ApiViewImage(web.View):
         action = post.get('action', query.get('action', ''))
         gender = post.get('gender', query.get('gender', ''))
         price = post.get('price', query.get('price', ''))
+        currency = post.get('currency', query.get('currency', 'UAH'))
+        cid = post.get('cid', query.get('cid', ''))
         add = post.get('add', query.get('add', ''))
         remove = post.get('remove', query.get('remove', ''))
+        referer = post.get('referer', query.get('referer', ''))
+        user_agent = self.request.headers["User-Agent"]
+        url = post.get('url', query.get('url', self.request.headers.get("Referer", '')))
         time = post.get('time', query.get('time', '356'))
         time_check = time_regex.match(time)
         if time_check:
@@ -245,24 +251,36 @@ class ApiViewImage(web.View):
                     ip, _ = peername
             except Exception as ex:
                 logger.error(exception_message(exc=str(ex), request=str(self.request._message)))
-        data = {
-            'js': ujson.dumps({
-                'action': action,
-                'ip': ip,
+        # data = {
+        #     'js': ujson.dumps({
+        #         'action': action,
+        #         'ip': ip,
+        #         'account_id': account_id,
+        #         'gender': gender,
+        #         'price': price,
+        #         'time': time,
+        #         'add': add.split(','),
+        #         'remove': remove.split(',')
+        #     })
+        # }
+        # if account_id and remove:
+        #     store_data = {
+        #         'account_id': account_id,
+        #         'ids': remove.split(',')
+        #     }
+        #     await spawn(self.request, stored(self.request.app.redis_pool, store_data))
+        if action == 'goal' and cid != '':
+            msg = ujson.dumps({
                 'account_id': account_id,
-                'gender': gender,
+                'currency': currency,
                 'price': price,
-                'time': time,
-                'add': add.split(','),
-                'remove': remove.split(',')
+                'referer': referer,
+                'url': url,
+                'user_agent': user_agent,
+                'ip': ip,
+                'cid': cid
             })
-        }
-        if account_id and remove:
-            store_data = {
-                'account_id': account_id,
-                'ids': remove.split(',')
-            }
-            await spawn(self.request, stored(self.request.app.redis_pool, store_data))
+            await spawn(self.request, amqp_publish(self.request.app, msg))
         return web.Response(body=PIXEL_PNG_DATA, content_type='image/png')
 
     async def get(self):

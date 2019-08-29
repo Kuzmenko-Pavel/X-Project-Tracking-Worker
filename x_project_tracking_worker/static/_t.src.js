@@ -761,6 +761,62 @@ if (!('some' in Array.prototype)) {
     this.offer_id = typeof yottos_offer_id == 'string' || typeof yottos_offer_id == 'number' ||typeof yottos_offer_id == 'object'  ? yottos_offer_id : undefined;
     this.yottos_target = typeof yottos_target == 'string' ? yottos_target : '';
     this.yottos_action = typeof yottos_action == 'string' ? yottos_action : 'add';
+    this.cid = '';
+    this.getQueryVariable = function (variable) {
+        var query = window.location.search.substring(1);
+        var vars = query.split('&');
+        for (var i = 0; i < vars.length; i++) {
+            var pair = vars[i].split('=');
+            if (decodeURIComponent(pair[0]) === variable) {
+                return decodeURIComponent(pair[1]);
+            }
+        }
+        return '';
+    };
+    this.getCook = function (cookiename) {
+        var cookiestring= new RegExp(""+cookiename+"[^;]+").exec(document.cookie);
+        return decodeURIComponent(!!cookiestring ? cookiestring.toString().replace(/^[^=]+./,"") : "");
+    };
+    this.setCook = function (name, value, options) {
+        options = options || {};
+        if (options.expires && options.expires.toUTCString) {
+            options.expires = options.expires.toUTCString();
+        }
+        var updatedCookie = encodeURIComponent(name) + "=" + encodeURIComponent(value);
+        for (var optionKey in options) {
+            if (options.hasOwnProperty(optionKey)) {
+                updatedCookie += "; " + optionKey;
+                var optionValue = options[optionKey];
+                if (optionValue !== true) {
+                  updatedCookie += "=" + optionValue;
+                }
+            }
+        }
+        document.cookie = updatedCookie;
+
+    };
+    this.isGuid = function (stringToTest) {
+        if (stringToTest[0] === "{") {
+            stringToTest = stringToTest.substring(1, stringToTest.length - 1);
+        }
+        var regexGuid = /^(\{){0,1}[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}(\}){0,1}$/gi;
+        return regexGuid.test(stringToTest);
+    };
+    this.load_cid = function () {
+        var yt_url_cid = this.getQueryVariable('yt_cid');
+        var yt_cook_cid = this.getCook('yt_cid');
+        if (this.isGuid(yt_url_cid)){
+            this.cid = yt_url_cid;
+        }
+        else {
+            if (this.isGuid(yt_cook_cid)){
+                this.cid = yt_cook_cid;
+            }
+        }
+        if (this.isGuid(this.cid)){
+            this.setCook('yt_cid', this.cid, {'max-age': 1800});
+        }
+    };
     this.strVal = function(string)
         {
             var c, n = 0, utftext = "";
@@ -1100,8 +1156,20 @@ if (!('some' in Array.prototype)) {
     this.start = function(){
         this.setOfferId();
         this.send();
+        this.load_cid();
+    };
+    this.goal = function (price, currency) {
+        currency = currency || 'UAH';
+        currency = currency + '';
+        if (currency.length !== 3){
+            currency = 'UAH';
+        }
+        price = price || '0';
+        price = price + '';
+        var i = new Image();
+        i.src = 'https://rg.yottos.com/pixel/track.png?id=' + this.yottos_ac + '&price=' + price + '&currency=' + currency + '&action=goal&cid=' + this.cid;
     };
 };
 
-;window.yhhIntervalID = window.yhhIntervalID || null;
-;(window.ytt = window.ytt || new YottosTracker()).start();
+window.yhhIntervalID = window.yhhIntervalID || null;
+(window.ytt = window.ytt || new YottosTracker()).start();

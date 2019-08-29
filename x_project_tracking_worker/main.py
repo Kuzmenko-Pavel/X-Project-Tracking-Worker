@@ -10,6 +10,7 @@ import aiohttp_debugtoolbar
 from trafaret_config import commandline
 
 # from x_project_tracking_worker.db import init_db
+from x_project_tracking_worker.rabbitmq import init_rabbitmq
 from x_project_tracking_worker.fb import init_fb
 from x_project_tracking_worker.redis import init_redis, close_redis
 from x_project_tracking_worker.templates import init_templates
@@ -40,6 +41,7 @@ def init(loop, argv):
     # app.on_startup.append(init_db)
     app.on_startup.append(init_fb)
     app.on_startup.append(init_redis)
+    app.on_startup.append(init_rabbitmq)
     setup_routes(app)
     setup_middlewares(app)
     aiojobs_setup(app)

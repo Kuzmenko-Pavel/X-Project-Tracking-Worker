@@ -29,7 +29,8 @@ install_requires = ['aiohttp',
                     'cchardet',
                     'aiohttp_debugtoolbar',
                     'aioredis',
-                    'aiojobs==0.2.1'
+                    'aiojobs==0.2.1',
+                    'aio-pika'
                     ]
 
 setup(

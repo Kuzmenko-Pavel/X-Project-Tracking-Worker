@@ -19,3 +19,12 @@ fb_pixel:
   relation:
      default: '806312163091480'
      1F13B4C1-CD07-46AC-A392-F40082BC41C3: '1880613648682991'
+
+amqp:
+  broker_url: amqp://worker:worker@amqp.yottos.com/proxy_google_analytics?socket_timeout=1&heartbeat=60
+  queue: proxy_google_analytics
+  exchange: proxy_google_analytics
+  exchange_type: topic
+  routing_key: 'action.goal'
+  durable: true
+  auto_delete: false

@@ -25,5 +25,14 @@ TRAFARET_CONF = T.Dict({
     T.Key('fb_pixel'): T.Dict({
         T.Key('default'): T.String(),
         T.Key('relation'): T.Dict().allow_extra('*')
-    })
+    }),
+    T.Key('amqp'): T.Dict({
+        T.Key('broker_url'): T.String(),
+        T.Key('queue'): T.String(),
+        T.Key('exchange'): T.String(),
+        T.Key('exchange_type'): T.String(),
+        T.Key('routing_key'): T.String(),
+        T.Key('durable'): T.Bool(),
+        T.Key('auto_delete'): T.Bool(),
+    }),
 })
