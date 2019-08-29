@@ -26,5 +26,6 @@ async def amqp_publish(app, data):
         await exchange.publish(
             aio_pika.Message(data.encode()), app.amqp_routing_key,
         )
+        print(data)
 
 
