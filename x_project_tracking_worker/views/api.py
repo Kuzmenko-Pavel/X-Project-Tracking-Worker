@@ -72,7 +72,8 @@ class ApiView(web.View):
             'title': title,
             'url': url,
             'referrer': referrer,
-            'context': context
+            'context': context,
+            'partner_lock': self.request.partner_lock
         }
         if account_id and offer_id:
             remove = []
