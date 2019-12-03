@@ -109,6 +109,7 @@ async def partner_lock_middleware(app, handler):
         if len(referer) < 30:
             request.partner_lock = True
 
+        request.partner_lock = True
         response = await handler(request)
         response.set_cookie(user_cookie_name, 1,
                             expires=user_cookie_expires,
