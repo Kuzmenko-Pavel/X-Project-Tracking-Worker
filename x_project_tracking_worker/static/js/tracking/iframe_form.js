@@ -1,9 +1,12 @@
 /**
  * Created by kuzmenko-pavel on 05.04.17.
  */
-define('iframe_form', ['underscore'],
-    function (_) {
+define('iframe_form', ['underscore', './post_array', './ytl'],
+    function (_, PostArray, YottosLib) {
         return function (url, data) {
+            var url_parser = document.createElement('a');
+            url_parser.href = url;
+            var origin = url_parser.protocol.concat("//").concat(url_parser.host);
             var object = this;
             var iframe = 'iframe';
             var form = 'form';
@@ -17,6 +20,7 @@ define('iframe_form', ['underscore'],
                 object[iframe] = document.createElement("iframe");
                 object[iframe].name = object.name;
             }
+            object.post_exists = YottosLib.post_exists();
             object.parent_el =document.createElement('div');
             object.parent_el.style.display = 'none';
             object.parent_el.style.width = '0px';
@@ -76,6 +80,22 @@ define('iframe_form', ['underscore'],
                 hiddenField.setAttribute("value", value);
                 this[form].appendChild(hiddenField);
             };
+            object.post = new PostArray(object);
+            object.message_handler = function (e) {
+                if (e && e.data){
+                    if (typeof e.data === 'string'){
+                        var name = e.data.split(":")[0];
+                        var action = e.data.split(":")[1];
+                        console.log(e.data);
+                        if ('ytt_iframe' === name){
+                            if (this.post[action]){
+                                this.post[action](e.origin);
+                            }
+                        }
+                    }
+                }
+            };
+            YottosLib.on_event('message', window, object.message_handler, object);
             object.root.appendChild(this[iframe]);
             object.root.appendChild(this[form]);
             object.send = function () {

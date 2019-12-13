@@ -3,6 +3,9 @@
  */
 define(['underscore', './get_action'], function (_, getAction) {
     var processing = function (){
+        if(!this.queue){
+            this.queue = this.queue || [];
+        }
         var arg = this.queue.shift();
         if (arg){
             var action = this.callAction(getAction(arg));

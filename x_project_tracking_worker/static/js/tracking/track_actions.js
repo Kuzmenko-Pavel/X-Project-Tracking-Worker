@@ -24,8 +24,12 @@ define(['underscore', './transport'], function (_, transport) {
     };
     var track_actions = {};
     track_actions['remarketing'] = function (tracker, data, defer){
-        var d = _.extend({action:'remarketing'}, tracker, data);
-        transport.call(this, defer, _.mapObject(d, converter));
+        var d = _.extend({}, tracker, data, {action:'remarketing'});
+        transport.call(this, defer, _.mapObject(d, converter), 'frame');
+    };
+    track_actions['AddPaymentInfo'] = function (tracker, data, defer){
+        var d = _.extend({}, tracker, data, {action:'AddPaymentInfo'});
+        transport.call(this, defer, _.mapObject(d, converter), 'image');
     };
     return track_actions;
 

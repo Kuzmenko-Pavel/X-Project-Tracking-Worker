@@ -3,6 +3,9 @@
  */
 define(['underscore'], function (_) {
     var callMethod = function (){
+        if(!this.queue){
+            this.queue = this.queue || [];
+        }
         this.queue.push(arguments);
         try{
             this.processing();

