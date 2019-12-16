@@ -1,4 +1,4 @@
-from .views import ApiView, ApiView2, ApiViewImage
+from .views import ApiView, ApiView2, ApiViewImage, ApiViewBeacon
 
 
 def setup_routes(app):
@@ -8,4 +8,6 @@ def setup_routes(app):
     app.router.add_route('POST', '/pixel/track', ApiView2)
     app.router.add_route('GET', '/pixel/track.png', ApiViewImage)
     app.router.add_route('POST', '/pixel/track.png', ApiViewImage)
+    app.router.add_route('GET', '/pixel/track.beacon', ApiViewBeacon)
+    app.router.add_route('POST', '/pixel/track.beacon', ApiViewBeacon)
     app.router.add_static('/pixel/static/', app['config']['dir_path'] + '/static/', append_version=True)

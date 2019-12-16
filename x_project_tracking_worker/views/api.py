@@ -5,6 +5,7 @@ import ujson
 import re
 import aiohttp_jinja2
 from datetime import datetime
+from urllib.parse import parse_qs
 from x_project_tracking_worker.logger import logger, exception_message
 from x_project_tracking_worker.redis import stored
 from x_project_tracking_worker.rabbitmq import amqp_publish
@@ -305,3 +306,29 @@ class ApiViewImage(web.View):
     async def options(self):
         return await self.get_data()
 
+
+class ApiViewBeacon(web.View):
+    async def get_data(self):
+        print(parse_qs(await self.request.text()))
+        return web.Response(body='')
+
+    async def get(self):
+        return await self.get_data()
+
+    async def post(self):
+        return await self.get_data()
+
+    async def put(self):
+        return await self.get_data()
+
+    async def head(self):
+        return await self.get_data()
+
+    async def delete(self):
+        return await self.get_data()
+
+    async def patch(self):
+        return await self.get_data()
+
+    async def options(self):
+        return await self.get_data()

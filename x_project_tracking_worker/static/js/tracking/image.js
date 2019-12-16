@@ -1,8 +1,8 @@
 /**
  * Created by kuzmenko-pavel on 05.04.17.
  */
-define('image', ['underscore', './post_array', './ytl'],
-    function (_, PostArray, YottosLib) {
+define('image', ['underscore'],
+    function (_) {
         return function (url, data) {
             var object = this;
             object.time = new Date().getTime();

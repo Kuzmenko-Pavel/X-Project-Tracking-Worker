@@ -30,6 +30,15 @@ define(['./underscore'], function (_) {
             opt.passive = true;
         }
         elem[add](pre + evnt, func, opt);
+        return func;
+    };
+    YottosLib[prototype].off_event = function (
+        evnt,
+        elem,
+        func
+    ) {
+
+        elem[rem](pre + evnt, func);
     };
     YottosLib[prototype].on_load = function (
         win,
@@ -114,7 +123,7 @@ define(['./underscore'], function (_) {
         var defaults = {
             path: '/'
         };
-        if(window.location.protocol === "https:"){
+        if (window.location.protocol === "https:") {
             defaults.secure = true;
             defaults.same_site = 'None';
         }
@@ -143,6 +152,49 @@ define(['./underscore'], function (_) {
         }
         var regexGuid = /^(\{){0,1}[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}(\}){0,1}$/gi;
         return regexGuid.test(stringToTest);
+    };
+
+
+    var isBlob = function isBlob(val) {
+        return val instanceof Blob;
+    };
+
+    function sendBeacon(
+        url,
+        data
+    ) {
+        var event = window.event && window.event.type;
+        var sync = event === 'unload' || event === 'beforeunload';
+        var xhr = 'XMLHttpRequest' in window ? new window.XMLHttpRequest() : new window.ActiveXObject('Microsoft.XMLHTTP');
+        xhr.open('POST', url, !sync);
+        xhr.withCredentials = true;
+        xhr.setRequestHeader('Accept', '*/*');
+
+        if (_.isString(data)) {
+            xhr.setRequestHeader('Content-Type', 'text/plain; charset=utf-8');
+            xhr.responseType = 'text';
+        } else if (isBlob(data) && data.type) {
+            xhr.setRequestHeader('Content-Type', data.type);
+        }
+
+        try {
+            xhr.send(data);
+        } catch (error) {
+            return false;
+        }
+
+        return true;
+    }
+
+    if (!('navigator' in window)) {
+        window.navigator = {};
+    }
+    if (typeof this.navigator.sendBeacon !== 'function') {
+        window.navigator.sendBeacon = sendBeacon.bind(window);
+    }
+
+    YottosLib[prototype].sendBeacon = function (url, data) {
+        return window.navigator.sendBeacon(url, data);
     };
     return new YottosLib();
 });

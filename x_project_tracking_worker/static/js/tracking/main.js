@@ -7,14 +7,18 @@ require([
     './callAction',
     './callMethod',
     './processing',
-    './c_cheker'
+    './c_cheker',
+    './url_cheker',
+    './auto_goals'
 ], function (
     actions,
     track_actions,
     callAction,
     callMethod,
     processing,
-    c_cheker
+    c_cheker,
+    url_cheker,
+    auto_goals
 ) {
     (function(){
         var y = window['YottosTrackObject'] || 'ytt';
@@ -31,6 +35,8 @@ require([
             tracker.callMethod = callMethod;
             tracker.processing = processing;
             c_cheker(tracker);
+            url_cheker(tracker);
+            auto_goals(tracker);
         }
         tracker.processing();
     })();

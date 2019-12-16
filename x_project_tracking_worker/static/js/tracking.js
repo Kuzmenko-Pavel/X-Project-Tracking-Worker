@@ -1,5 +1,5 @@
 ;(function() {
-var underscore, ytl, get_action, cid, actions, settings, post_array, iframe_form, image, transport, track_actions, callAction, callMethod, processing, c_cheker, main;
+var underscore, ytl, get_action, cid, actions, settings, post_array, iframe_form, image, beacon, transport, track_actions, callAction, callMethod, processing, c_cheker, url_cheker, auto_goals, main;
 (function () {
   /* jshint ignore:start */
   //     Underscore.js 1.9.1
@@ -1971,6 +1971,10 @@ var underscore, ytl, get_action, cid, actions, settings, post_array, iframe_form
         opt.passive = true;
       }
       elem[add](pre + evnt, func, opt);
+      return func;
+    };
+    YottosLib[prototype].off_event = function (evnt, elem, func) {
+      elem[rem](pre + evnt, func);
     };
     YottosLib[prototype].on_load = function (win, callback, context) {
       var fn = _.bind(callback, context || win);
@@ -2065,6 +2069,38 @@ var underscore, ytl, get_action, cid, actions, settings, post_array, iframe_form
       }
       var regexGuid = /^(\{){0,1}[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}(\}){0,1}$/gi;
       return regexGuid.test(stringToTest);
+    };
+    var isBlob = function isBlob(val) {
+      return val instanceof Blob;
+    };
+    function sendBeacon(url, data) {
+      var event = window.event && window.event.type;
+      var sync = event === 'unload' || event === 'beforeunload';
+      var xhr = 'XMLHttpRequest' in window ? new window.XMLHttpRequest() : new window.ActiveXObject('Microsoft.XMLHTTP');
+      xhr.open('POST', url, !sync);
+      xhr.withCredentials = true;
+      xhr.setRequestHeader('Accept', '*/*');
+      if (_.isString(data)) {
+        xhr.setRequestHeader('Content-Type', 'text/plain; charset=utf-8');
+        xhr.responseType = 'text';
+      } else if (isBlob(data) && data.type) {
+        xhr.setRequestHeader('Content-Type', data.type);
+      }
+      try {
+        xhr.send(data);
+      } catch (error) {
+        return false;
+      }
+      return true;
+    }
+    if (!('navigator' in window)) {
+      window.navigator = {};
+    }
+    if (typeof this.navigator.sendBeacon !== 'function') {
+      window.navigator.sendBeacon = sendBeacon.bind(window);
+    }
+    YottosLib[prototype].sendBeacon = function (url, data) {
+      return window.navigator.sendBeacon(url, data);
     };
     return new YottosLib();
   }(underscore);
@@ -2336,12 +2372,13 @@ var underscore, ytl, get_action, cid, actions, settings, post_array, iframe_form
           }
         }
       };
-      YottosLib.on_event('message', window, object.message_handler, object);
+      object.message_fun = YottosLib.on_event('message', window, object.message_handler, object);
       object.root.appendChild(this[iframe]);
       object.root.appendChild(this[form]);
       object.send = function () {
         document.body.appendChild(this.parent_el);
         this[iframe].onload = _.bind(function (e) {
+          YottosLib.off_event('message', window, object.message_fun);
           this.parent_el.remove();
           this.defer.resolve();
         }, this);
@@ -2352,7 +2389,7 @@ var underscore, ytl, get_action, cid, actions, settings, post_array, iframe_form
       return object;
     };
   }(underscore, post_array, ytl);
-  image = function (_, PostArray, YottosLib) {
+  image = function (_) {
     return function (url, data) {
       var object = this;
       object.time = new Date().getTime();
@@ -2375,23 +2412,44 @@ var underscore, ytl, get_action, cid, actions, settings, post_array, iframe_form
       object.image.src = url + (url.indexOf('.png') < 0 ? '.png' : '') + (url.indexOf('?') < 0 ? '?' : '&') + params;
       return object;
     };
-  }(underscore, post_array, ytl);
-  transport = function (_, settings, Iframe_form, Image) {
+  }(underscore);
+  beacon = function (_, YottosLib) {
+    return function (url, data) {
+      var object = this;
+      object.defer = new _.Deferred();
+      var params = '';
+      for (var key in data) {
+        if (params !== '') {
+          params += '&';
+        }
+        params += key + '=' + encodeURIComponent(data[key]);
+      }
+      YottosLib.sendBeacon(url + (url.indexOf('.beacon') < 0 ? '.beacon' : ''), params);
+      return object;
+    };
+  }(underscore, ytl);
+  transport = function (_, settings, Iframe_form, Image, Beacon) {
     return function (defer, data, type) {
-      var url = settings.rg + settings.rgt;
+      var url;
       var dummy;
       if (type === 'frame') {
+        url = settings.rg + settings.rgt;
         dummy = new Iframe_form(url, data);
       } else if (type === 'image') {
+        url = settings.rg + settings.rgt;
         dummy = new Image(url, data);
+      } else if (type === 'beacon') {
+        url = settings.rg + settings.rgt;
+        dummy = new Beacon(url, data);
       } else {
+        url = settings.rg + settings.rgt;
         dummy = new Iframe_form(url, data);
       }
       dummy.defer.done(_.bind(function () {
         defer.resolveWith(this);
       }, this));
     };
-  }(underscore, settings, iframe_form, image);
+  }(underscore, settings, iframe_form, image, beacon);
   track_actions = function (_, transport) {
     var converter = function (val, key) {
       var r = null;
@@ -2417,7 +2475,79 @@ var underscore, ytl, get_action, cid, actions, settings, post_array, iframe_form
     };
     track_actions['AddPaymentInfo'] = function (tracker, data, defer) {
       var d = _.extend({}, tracker, data, { action: 'AddPaymentInfo' });
-      transport.call(this, defer, _.mapObject(d, converter), 'image');
+      transport.call(this, defer, _.mapObject(d, converter), 'frame');
+    };
+    track_actions['AddToCart'] = function (tracker, data, defer) {
+      var d = _.extend({}, tracker, data, { action: 'AddPaymentInfo' });
+      transport.call(this, defer, _.mapObject(d, converter), 'frame');
+    };
+    track_actions['AddToWishlist'] = function (tracker, data, defer) {
+      var d = _.extend({}, tracker, data, { action: 'AddPaymentInfo' });
+      transport.call(this, defer, _.mapObject(d, converter), 'frame');
+    };
+    track_actions['CompleteRegistration'] = function (tracker, data, defer) {
+      var d = _.extend({}, tracker, data, { action: 'AddPaymentInfo' });
+      transport.call(this, defer, _.mapObject(d, converter), 'frame');
+    };
+    track_actions['Contact'] = function (tracker, data, defer) {
+      var d = _.extend({}, tracker, data, { action: 'AddPaymentInfo' });
+      transport.call(this, defer, _.mapObject(d, converter), 'frame');
+    };
+    track_actions['CustomizeProduct'] = function (tracker, data, defer) {
+      var d = _.extend({}, tracker, data, { action: 'AddPaymentInfo' });
+      transport.call(this, defer, _.mapObject(d, converter), 'frame');
+    };
+    track_actions['Donate'] = function (tracker, data, defer) {
+      var d = _.extend({}, tracker, data, { action: 'AddPaymentInfo' });
+      transport.call(this, defer, _.mapObject(d, converter), 'frame');
+    };
+    track_actions['FindLocation'] = function (tracker, data, defer) {
+      var d = _.extend({}, tracker, data, { action: 'AddPaymentInfo' });
+      transport.call(this, defer, _.mapObject(d, converter), 'frame');
+    };
+    track_actions['InitiateCheckout'] = function (tracker, data, defer) {
+      var d = _.extend({}, tracker, data, { action: 'AddPaymentInfo' });
+      transport.call(this, defer, _.mapObject(d, converter), 'frame');
+    };
+    track_actions['Lead'] = function (tracker, data, defer) {
+      var d = _.extend({}, tracker, data, { action: 'AddPaymentInfo' });
+      transport.call(this, defer, _.mapObject(d, converter), 'frame');
+    };
+    track_actions['PageView'] = function (tracker, data, defer) {
+      var d = _.extend({}, tracker, data, { action: 'AddPaymentInfo' });
+      transport.call(this, defer, _.mapObject(d, converter), 'frame');
+    };
+    track_actions['Purchase'] = function (tracker, data, defer) {
+      var d = _.extend({}, tracker, data, { action: 'AddPaymentInfo' });
+      transport.call(this, defer, _.mapObject(d, converter), 'frame');
+    };
+    track_actions['Schedule'] = function (tracker, data, defer) {
+      var d = _.extend({}, tracker, data, { action: 'AddPaymentInfo' });
+      transport.call(this, defer, _.mapObject(d, converter), 'frame');
+    };
+    track_actions['Search'] = function (tracker, data, defer) {
+      var d = _.extend({}, tracker, data, { action: 'Search' });
+      transport.call(this, defer, _.mapObject(d, converter), 'frame');
+    };
+    track_actions['StartTrial'] = function (tracker, data, defer) {
+      var d = _.extend({}, tracker, data, { action: 'StartTrial' });
+      transport.call(this, defer, _.mapObject(d, converter), 'frame');
+    };
+    track_actions['SubmitApplication'] = function (tracker, data, defer) {
+      var d = _.extend({}, tracker, data, { action: 'SubmitApplication' });
+      transport.call(this, defer, _.mapObject(d, converter), 'frame');
+    };
+    track_actions['Subscribe'] = function (tracker, data, defer) {
+      var d = _.extend({}, tracker, data, { action: 'Subscribe' });
+      transport.call(this, defer, _.mapObject(d, converter), 'frame');
+    };
+    track_actions['ViewContent'] = function (tracker, data, defer) {
+      var d = _.extend({}, tracker, data, { action: 'ViewContent' });
+      transport.call(this, defer, _.mapObject(d, converter), 'frame');
+    };
+    track_actions['AutoGoals'] = function (tracker, data, defer) {
+      var d = _.extend({}, tracker, data, { action: 'AutoGoals' });
+      transport.call(this, defer, _.mapObject(d, converter), 'beacon');
     };
     return track_actions;
   }(underscore, transport);
@@ -2523,7 +2653,23 @@ var underscore, ytl, get_action, cid, actions, settings, post_array, iframe_form
     };
     return c_cheker;
   }(underscore);
-  (function (actions, track_actions, callAction, callMethod, processing, c_cheker) {
+  url_cheker = function (_) {
+    var url_cheker = function (tracker) {
+      var dl = document.location.href;
+      var rl = document.referrer;
+      _.each(tracker.trakers, function (element) {
+        element.dl = dl;
+        element.rl = rl;
+      });
+    };
+    return url_cheker;
+  }(underscore);
+  auto_goals = function (_) {
+    var auto_goals = function (tracker) {
+    };
+    return auto_goals;
+  }(underscore);
+  (function (actions, track_actions, callAction, callMethod, processing, c_cheker, url_cheker, auto_goals) {
     (function () {
       var y = window['YottosTrackObject'] || 'ytt';
       var tracker = window[y] || function () {
@@ -2539,10 +2685,12 @@ var underscore, ytl, get_action, cid, actions, settings, post_array, iframe_form
         tracker.callMethod = callMethod;
         tracker.processing = processing;
         c_cheker(tracker);
+        url_cheker(tracker);
+        auto_goals(tracker);
       }
       tracker.processing();
     }());
-  }(actions, track_actions, callAction, callMethod, processing, c_cheker));
+  }(actions, track_actions, callAction, callMethod, processing, c_cheker, url_cheker, auto_goals));
   main = undefined;
 }());
 }());

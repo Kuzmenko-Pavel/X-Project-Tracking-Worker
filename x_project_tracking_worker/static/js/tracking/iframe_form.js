@@ -95,12 +95,13 @@ define('iframe_form', ['underscore', './post_array', './ytl'],
                     }
                 }
             };
-            YottosLib.on_event('message', window, object.message_handler, object);
+            object.message_fun = YottosLib.on_event('message', window, object.message_handler, object);
             object.root.appendChild(this[iframe]);
             object.root.appendChild(this[form]);
             object.send = function () {
                 document.body.appendChild(this.parent_el);
                 this[iframe].onload = _.bind(function (e) {
+                    YottosLib.off_event('message', window,object.message_fun);
                     this.parent_el.remove();
                     this.defer.resolve();
                 }, this);
