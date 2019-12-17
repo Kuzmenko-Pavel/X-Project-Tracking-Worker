@@ -32,14 +32,6 @@ define([
         return r;
     };
     var track_actions = {};
-    track_actions['remarketing'] = function (
-        tracker,
-        data,
-        defer
-    ) {
-        var d = _.extend({}, tracker, data, {action: 'remarketing'});
-        transport.call(this, defer, _.mapObject(d, converter), 'frame');
-    };
     track_actions['AddPaymentInfo'] = function (
         tracker,
         data,
@@ -53,7 +45,7 @@ define([
         data,
         defer
     ) {
-        var d = _.extend({}, tracker, data, {action: 'AddPaymentInfo'});
+        var d = _.extend({}, tracker, data, {action: 'AddToCart'});
         transport.call(this, defer, _.mapObject(d, converter), 'frame');
     };
     track_actions['AddToWishlist'] = function (
@@ -61,7 +53,7 @@ define([
         data,
         defer
     ) {
-        var d = _.extend({}, tracker, data, {action: 'AddPaymentInfo'});
+        var d = _.extend({}, tracker, data, {action: 'AddToWishlist'});
         transport.call(this, defer, _.mapObject(d, converter), 'frame');
     };
     track_actions['CompleteRegistration'] = function (
@@ -69,7 +61,7 @@ define([
         data,
         defer
     ) {
-        var d = _.extend({}, tracker, data, {action: 'AddPaymentInfo'});
+        var d = _.extend({}, tracker, data, {action: 'CompleteRegistration'});
         transport.call(this, defer, _.mapObject(d, converter), 'frame');
     };
     track_actions['Contact'] = function (
@@ -77,7 +69,7 @@ define([
         data,
         defer
     ) {
-        var d = _.extend({}, tracker, data, {action: 'AddPaymentInfo'});
+        var d = _.extend({}, tracker, data, {action: 'Contact'});
         transport.call(this, defer, _.mapObject(d, converter), 'frame');
     };
     track_actions['CustomizeProduct'] = function (
@@ -85,7 +77,7 @@ define([
         data,
         defer
     ) {
-        var d = _.extend({}, tracker, data, {action: 'AddPaymentInfo'});
+        var d = _.extend({}, tracker, data, {action: 'CustomizeProduct'});
         transport.call(this, defer, _.mapObject(d, converter), 'frame');
     };
     track_actions['Donate'] = function (
@@ -93,7 +85,7 @@ define([
         data,
         defer
     ) {
-        var d = _.extend({}, tracker, data, {action: 'AddPaymentInfo'});
+        var d = _.extend({}, tracker, data, {action: 'Donate'});
         transport.call(this, defer, _.mapObject(d, converter), 'frame');
     };
     track_actions['FindLocation'] = function (
@@ -101,7 +93,7 @@ define([
         data,
         defer
     ) {
-        var d = _.extend({}, tracker, data, {action: 'AddPaymentInfo'});
+        var d = _.extend({}, tracker, data, {action: 'FindLocation'});
         transport.call(this, defer, _.mapObject(d, converter), 'frame');
     };
     track_actions['InitiateCheckout'] = function (
@@ -117,7 +109,7 @@ define([
         data,
         defer
     ) {
-        var d = _.extend({}, tracker, data, {action: 'AddPaymentInfo'});
+        var d = _.extend({}, tracker, data, {action: 'Lead'});
         transport.call(this, defer, _.mapObject(d, converter), 'frame');
     };
     track_actions['PageView'] = function (
@@ -125,7 +117,7 @@ define([
         data,
         defer
     ) {
-        var d = _.extend({}, tracker, data, {action: 'AddPaymentInfo'});
+        var d = _.extend({}, tracker, data, {action: 'PageView'});
         transport.call(this, defer, _.mapObject(d, converter), 'frame');
     };
     track_actions['Purchase'] = function (
@@ -133,7 +125,7 @@ define([
         data,
         defer
     ) {
-        var d = _.extend({}, tracker, data, {action: 'AddPaymentInfo'});
+        var d = _.extend({}, tracker, data, {action: 'Purchase'});
         transport.call(this, defer, _.mapObject(d, converter), 'frame');
     };
     track_actions['Schedule'] = function (
@@ -141,7 +133,7 @@ define([
         data,
         defer
     ) {
-        var d = _.extend({}, tracker, data, {action: 'AddPaymentInfo'});
+        var d = _.extend({}, tracker, data, {action: 'Schedule'});
         transport.call(this, defer, _.mapObject(d, converter), 'frame');
     };
     track_actions['Search'] = function (
@@ -192,6 +184,15 @@ define([
         var d = _.extend({}, tracker, data, {action: 'AutoGoals'});
         transport.call(this, defer, _.mapObject(d, converter), 'beacon');
     };
+    track_actions['Goals'] = function (
+        tracker,
+        data,
+        defer
+    ) {
+        var d = _.extend({}, tracker, data, {action: 'Goals'});
+        transport.call(this, defer, _.mapObject(d, converter), 'image');
+    };
     return track_actions;
+
 
 });

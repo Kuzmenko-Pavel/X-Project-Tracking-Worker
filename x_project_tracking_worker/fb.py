@@ -1,5 +1,6 @@
 from collections import defaultdict
 
+
 async def init_fb(app):
     conf = app['config']['fb_pixel']
     app.fb_pixel = defaultdict(lambda: conf['default'])

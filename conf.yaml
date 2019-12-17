@@ -21,9 +21,9 @@ fb_pixel:
      1F13B4C1-CD07-46AC-A392-F40082BC41C3: '1880613648682991'
 
 amqp:
-  broker_url: amqp://worker:worker@amqp.yottos.com/proxy_google_analytics?socket_timeout=1&heartbeat=60
-  queue: proxy_google_analytics
-  exchange: proxy_google_analytics
+  broker_url: amqp://x-project-goals:x-project-goals@amqp.yottos.com/x-project-goals?socket_timeout=1&heartbeat=60
+  queue: goals
+  exchange: goals
   exchange_type: topic
   routing_key: 'action.goal'
   durable: true

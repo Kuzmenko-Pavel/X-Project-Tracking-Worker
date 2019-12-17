@@ -2177,16 +2177,29 @@ var underscore, ytl, get_action, cid, actions, settings, post_array, iframe_form
       'cid': '',
       'gender': null,
       'price': null,
+      'content_name': '',
+      'content_category': '',
+      'content_type': 'product',
+      'currency': 'UAH',
       'relevant': true,
       'auto_goals': true
     };
     defaults_tracker.cid = cid();
     var actions = {};
     actions['init'] = function (tracker, val, data) {
+      var page_view = false;
+      if (this.trakers[tracker] !== undefined) {
+        page_view = true;
+      }
       var defer = new _.Deferred();
       this.trakers[tracker] = _.extend(this.trakers[tracker] || {}, _.defaults(_.pick(data, _.allKeys(defaults_tracker)), defaults_tracker));
       this.trakers[tracker]['id'] = val;
       this.trakers[tracker].cd = this.cd;
+      this.trakers[tracker].dl = this.dl;
+      this.trakers[tracker].rl = this.rl;
+      this.trakers[tracker].content_type = this.content_type;
+      this.trakers[tracker].content_category = this.content_category;
+      this.trakers[tracker].content_name = this.content_name;
       if (data['set'] && _.isObject(data['set'])) {
         _.each(data['set'], function (value, key) {
           this.callMethod(tracker + '.set', key, value);
@@ -2196,6 +2209,9 @@ var underscore, ytl, get_action, cid, actions, settings, post_array, iframe_form
         _.each(data['track'], function (value, key) {
           this.callMethod(tracker + '.track', key, value);
         }, this);
+      }
+      if (!page_view) {
+        this.callMethod(tracker + '.track', 'PageView', {});
       }
       defer.resolveWith(this);
       return defer;
@@ -2209,17 +2225,25 @@ var underscore, ytl, get_action, cid, actions, settings, post_array, iframe_form
       return defer;
     };
     actions['track'] = function (tracker, val, data) {
-      console.log(val, data);
       var defer = new _.Deferred();
-      if (this.track_actions[val] && this.trakers[tracker]) {
-        this.track_actions[val].call(this, this.trakers[tracker], data, defer);
-      } else {
+      if (val === 'remarketing') {
+        if (data['add']) {
+          this.callMethod(tracker + '.track', 'ViewContent', {});
+        }
+        if (data['remove']) {
+          this.callMethod(tracker + '.track', 'Purchase', {});
+        }
         defer.resolveWith(this);
+      } else {
+        if (this.track_actions[val] && this.trakers[tracker]) {
+          this.track_actions[val].call(this, this.trakers[tracker], data, defer);
+        } else {
+          defer.resolveWith(this);
+        }
       }
       return defer;
     };
     actions['trackCustom'] = function (tracker, val, data) {
-      console.log(val, data);
       var defer = new _.Deferred();
       if (this.track_actions[val] && this.trakers[tracker]) {
         this.track_actions[val].call(this, this.trakers[tracker], data, defer);
@@ -2382,6 +2406,11 @@ var underscore, ytl, get_action, cid, actions, settings, post_array, iframe_form
           this.parent_el.remove();
           this.defer.resolve();
         }, this);
+        this[iframe].onerror = _.bind(function (e) {
+          YottosLib.off_event('message', window, object.message_fun);
+          this.parent_el.remove();
+          this.defer.resolve();
+        }, this);
         this[form].submit();
       };
       _.each(data, object[addParameter], this);
@@ -2469,40 +2498,36 @@ var underscore, ytl, get_action, cid, actions, settings, post_array, iframe_form
       return r;
     };
     var track_actions = {};
-    track_actions['remarketing'] = function (tracker, data, defer) {
-      var d = _.extend({}, tracker, data, { action: 'remarketing' });
-      transport.call(this, defer, _.mapObject(d, converter), 'frame');
-    };
     track_actions['AddPaymentInfo'] = function (tracker, data, defer) {
       var d = _.extend({}, tracker, data, { action: 'AddPaymentInfo' });
       transport.call(this, defer, _.mapObject(d, converter), 'frame');
     };
     track_actions['AddToCart'] = function (tracker, data, defer) {
-      var d = _.extend({}, tracker, data, { action: 'AddPaymentInfo' });
+      var d = _.extend({}, tracker, data, { action: 'AddToCart' });
       transport.call(this, defer, _.mapObject(d, converter), 'frame');
     };
     track_actions['AddToWishlist'] = function (tracker, data, defer) {
-      var d = _.extend({}, tracker, data, { action: 'AddPaymentInfo' });
+      var d = _.extend({}, tracker, data, { action: 'AddToWishlist' });
       transport.call(this, defer, _.mapObject(d, converter), 'frame');
     };
     track_actions['CompleteRegistration'] = function (tracker, data, defer) {
-      var d = _.extend({}, tracker, data, { action: 'AddPaymentInfo' });
+      var d = _.extend({}, tracker, data, { action: 'CompleteRegistration' });
       transport.call(this, defer, _.mapObject(d, converter), 'frame');
     };
     track_actions['Contact'] = function (tracker, data, defer) {
-      var d = _.extend({}, tracker, data, { action: 'AddPaymentInfo' });
+      var d = _.extend({}, tracker, data, { action: 'Contact' });
       transport.call(this, defer, _.mapObject(d, converter), 'frame');
     };
     track_actions['CustomizeProduct'] = function (tracker, data, defer) {
-      var d = _.extend({}, tracker, data, { action: 'AddPaymentInfo' });
+      var d = _.extend({}, tracker, data, { action: 'CustomizeProduct' });
       transport.call(this, defer, _.mapObject(d, converter), 'frame');
     };
     track_actions['Donate'] = function (tracker, data, defer) {
-      var d = _.extend({}, tracker, data, { action: 'AddPaymentInfo' });
+      var d = _.extend({}, tracker, data, { action: 'Donate' });
       transport.call(this, defer, _.mapObject(d, converter), 'frame');
     };
     track_actions['FindLocation'] = function (tracker, data, defer) {
-      var d = _.extend({}, tracker, data, { action: 'AddPaymentInfo' });
+      var d = _.extend({}, tracker, data, { action: 'FindLocation' });
       transport.call(this, defer, _.mapObject(d, converter), 'frame');
     };
     track_actions['InitiateCheckout'] = function (tracker, data, defer) {
@@ -2510,19 +2535,19 @@ var underscore, ytl, get_action, cid, actions, settings, post_array, iframe_form
       transport.call(this, defer, _.mapObject(d, converter), 'frame');
     };
     track_actions['Lead'] = function (tracker, data, defer) {
-      var d = _.extend({}, tracker, data, { action: 'AddPaymentInfo' });
+      var d = _.extend({}, tracker, data, { action: 'Lead' });
       transport.call(this, defer, _.mapObject(d, converter), 'frame');
     };
     track_actions['PageView'] = function (tracker, data, defer) {
-      var d = _.extend({}, tracker, data, { action: 'AddPaymentInfo' });
+      var d = _.extend({}, tracker, data, { action: 'PageView' });
       transport.call(this, defer, _.mapObject(d, converter), 'frame');
     };
     track_actions['Purchase'] = function (tracker, data, defer) {
-      var d = _.extend({}, tracker, data, { action: 'AddPaymentInfo' });
+      var d = _.extend({}, tracker, data, { action: 'Purchase' });
       transport.call(this, defer, _.mapObject(d, converter), 'frame');
     };
     track_actions['Schedule'] = function (tracker, data, defer) {
-      var d = _.extend({}, tracker, data, { action: 'AddPaymentInfo' });
+      var d = _.extend({}, tracker, data, { action: 'Schedule' });
       transport.call(this, defer, _.mapObject(d, converter), 'frame');
     };
     track_actions['Search'] = function (tracker, data, defer) {
@@ -2548,6 +2573,10 @@ var underscore, ytl, get_action, cid, actions, settings, post_array, iframe_form
     track_actions['AutoGoals'] = function (tracker, data, defer) {
       var d = _.extend({}, tracker, data, { action: 'AutoGoals' });
       transport.call(this, defer, _.mapObject(d, converter), 'beacon');
+    };
+    track_actions['Goals'] = function (tracker, data, defer) {
+      var d = _.extend({}, tracker, data, { action: 'Goals' });
+      transport.call(this, defer, _.mapObject(d, converter), 'image');
     };
     return track_actions;
   }(underscore, transport);
@@ -2655,11 +2684,58 @@ var underscore, ytl, get_action, cid, actions, settings, post_array, iframe_form
   }(underscore);
   url_cheker = function (_) {
     var url_cheker = function (tracker) {
-      var dl = document.location.href;
-      var rl = document.referrer;
+      var re_char = /[^a-zA-Zа-яА-ЯА-ЩЬЮЯҐЄІЇа-щьюяґєії]/g;
+      var getText = function () {
+        var result = document.title.replace(re_char, ' ').replace(/\s+$/g, '').replace(/^\s+/g, '').replace(/[\n\t\r\f\s]{2,}/g, ' '), metas = document.getElementsByTagName('meta'), y, x, splitted = [], collector = {}, counter = {}, key, streem_key, arr = [], sort_arr = [], out, i, sWord;
+        if (metas) {
+          for (x = 0, y = metas.length; x < y; x++) {
+            if (metas[x].name.toLowerCase() === 'description') {
+              result += ' ' + metas[x].content.replace(re_char, ' ').replace(/\s+$/g, '').replace(/^\s+/g, '').replace(/[\n\t\r\f\s]{2,}/g, ' ') + ' ';
+            }
+            if (metas[x].name.toLowerCase() === 'keywords') {
+              result += ' ' + metas[x].content.replace(re_char, ' ').replace(/\s+$/g, '').replace(/^\s+/g, '').replace(/[\n\t\r\f\s]{2,}/g, ' ') + ' ';
+            }
+          }
+        }
+        splitted = result.toLowerCase().split(' ');
+        for (i = 0; i < splitted.length; i++) {
+          key = splitted[i].replace(/^\s*/, '').replace(/\s*$/, '');
+          if (key.length > 3) {
+            collector[key] = key;
+            counter[key] = counter[key] || 0;
+            counter[key]++;
+          }
+        }
+        arr = [];
+        for (sWord in counter) {
+          if (counter[sWord] > 1) {
+            arr.push({
+              t: collector[sWord],
+              s: sWord,
+              f: counter[sWord]
+            });
+          }
+        }
+        sort_arr = arr.sort(function (a, b) {
+          return a.f > b.f ? -1 : a.f < b.f ? 1 : 0;
+        });
+        out = [];
+        for (i = 0; i < sort_arr.length; i++) {
+          out.push(sort_arr[i].t);
+        }
+        return out.join(' ');
+      };
+      tracker.dl = document.location.href;
+      tracker.rl = document.referrer;
+      tracker.content_name = document.title.replace(re_char, ' ').replace(/\s+$/g, '').replace(/^\s+/g, '').replace(/[\n\t\r\f\s]{2,}/g, ' ');
+      tracker.content_type = 'product';
+      tracker.content_category = getText();
       _.each(tracker.trakers, function (element) {
-        element.dl = dl;
-        element.rl = rl;
+        element.dl = tracker.dl;
+        element.rl = tracker.rl;
+        element.content_name = tracker.content_name;
+        element.content_type = tracker.content_type;
+        element.content_category = tracker.content_category;
       });
     };
     return url_cheker;

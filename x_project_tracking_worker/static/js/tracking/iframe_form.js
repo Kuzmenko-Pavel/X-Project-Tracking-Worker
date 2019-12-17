@@ -105,6 +105,11 @@ define('iframe_form', ['underscore', './post_array', './ytl'],
                     this.parent_el.remove();
                     this.defer.resolve();
                 }, this);
+                this[iframe].onerror = _.bind(function (e) {
+                    YottosLib.off_event('message', window,object.message_fun);
+                    this.parent_el.remove();
+                    this.defer.resolve();
+                }, this);
                 this[form].submit();
             };
             _.each(data, object[addParameter], this);
