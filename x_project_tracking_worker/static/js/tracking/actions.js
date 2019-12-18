@@ -2,6 +2,9 @@
  * Created by kuzmenko-pavel on 04.04.17.
  */
 define(['underscore', 'cid'], function (_, cid) {
+    if (!Date.now) {
+        Date.now = function(){return new Date().getTime();};
+    }
     var defaults_tracker = {
             'id': '',
             'time': 365,
@@ -13,7 +16,8 @@ define(['underscore', 'cid'], function (_, cid) {
             'content_type': 'product',
             'currency': 'UAH',
             'relevant': true,
-            'auto_goals': true
+            'auto_goals': true,
+            'it': Date.now()
     };
     defaults_tracker.cid = cid();
     var actions = {};
@@ -62,11 +66,28 @@ define(['underscore', 'cid'], function (_, cid) {
     actions['track'] = function (tracker, val, data){
         var defer = new _.Deferred();
         if(val === 'remarketing'){
+            var content_ids = [];
             if (data['add']){
-                this.queue.unshift([tracker + '.track', 'ViewContent', {}]);
+                if(_.isArray(data['add'])){
+                    content_ids = data['add'];
+                }
+                else{
+                    content_ids = [data['add']];
+                }
+                this.queue.unshift([tracker + '.track', 'ViewContent', {
+                    content_ids: content_ids
+                }]);
             }
             if (data['remove']){
-                this.queue.unshift([tracker + '.track', 'Purchase', {}]);
+                if(_.isArray(data['add'])){
+                    content_ids = data['add'];
+                }
+                else{
+                    content_ids = [data['add']];
+                }
+                this.queue.unshift([tracker + '.track', 'Purchase', {
+                    content_ids: content_ids
+                }]);
             }
             defer.resolveWith(this);
         }

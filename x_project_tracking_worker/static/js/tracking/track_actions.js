@@ -14,7 +14,6 @@ define([
     ) {
         var r = null;
         if (key === 'gender') {
-            console.log(key, val);
             if (_.isBoolean(val) || _.isNumber(val)) {
                 if (Boolean(val)) {
                     r = 'w';

@@ -41,7 +41,6 @@ define(['underscore'], function (_) {
                         log_addet = true;
                         console.log(dc);
                     }
-                    //eval('(window.console||{clear:function(){}}).clear();')
                 }
             } catch (err) {
             }

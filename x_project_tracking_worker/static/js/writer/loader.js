@@ -1,17 +1,17 @@
 /**
  * Created by kuzmenko-pavel on 04.04.17.
  */
-define(['./user_history/main', './ytl'], function (user_history, YottosLib) {
+define(['./user_history/main', './ytl', './fbq'], function (user_history, YottosLib, fbq) {
     var Loader = function (){
         this.loader = function () {
             this.uh = user_history;
+            this.fb = fbq;
         };
         this.post_listener = function (e) {
             if (e && e.data){
                 if (typeof e.data === 'string'){
                     var name = e.data.split(":")[0];
                     var action = e.data.split(":")[1];
-                    console.log(e.data);
                     if (this.name === name){
                         if (this[action]){
                             this[action](e.origin);

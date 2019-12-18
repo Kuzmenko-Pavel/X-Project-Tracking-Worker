@@ -86,7 +86,6 @@ define('iframe_form', ['underscore', './post_array', './ytl'],
                     if (typeof e.data === 'string'){
                         var name = e.data.split(":")[0];
                         var action = e.data.split(":")[1];
-                        console.log(e.data);
                         if ('ytt_iframe' === name){
                             if (this.post[action]){
                                 this.post[action](e.origin);

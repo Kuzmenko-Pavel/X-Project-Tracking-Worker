@@ -169,11 +169,8 @@ define([
             return false;
         };
         UserHistory[prototype].processing = function (data) {
-            console.log(data);
             if (test()) {
                 this.load();
-                console.log(this.cost_user);
-                console.log(this.gender_user);
                 this.cost_user.add(costRange(data['price']));
                 this.gender_user.add(getGender(data['gender']));
                 var ac_id = data['account_id'];

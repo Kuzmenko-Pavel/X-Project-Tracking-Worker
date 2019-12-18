@@ -65,12 +65,6 @@ class ApiView(web.View):
                         id_offer = tmp[1]
                         if action == 'remove':
                             remove.append(id_offer)
-            if remove:
-                store_data = {
-                    'account_id': account_id,
-                    'ids': remove
-                }
-                await spawn(self.request, stored(self.request.app.redis_pool, store_data))
         return data
 
     async def get(self):
@@ -100,11 +94,15 @@ class ApiView2(web.View):
     async def get_data(self):
         data = dict({
             'fb': {},
-            'yt': {}
+            'yt': {},
+            'goal': {}
         })
         try:
             data_processor = DataProcessor(self.request)
             data = await data_processor()
+            if data['goal']:
+                msg = ujson.dumps(data['goal'])
+                await spawn(self.request, amqp_publish(self.request.app, msg, 'goal.auto'))
         except asyncio.CancelledError:
             logger.error('CancelledError DataProcessor %s' % str(time.time() - self.request.start_time))
         except Exception as ex:
