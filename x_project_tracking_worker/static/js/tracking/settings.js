@@ -3,8 +3,8 @@
  */
 define('settings', [], function () {
     return {
-        // rg: 'https://rg.yottos.com',
-        rg: 'http://0.0.0.0:10000',
+        rg: 'https://rg.yottos.com',
+        // rg: 'http://0.0.0.0:10000',
         rgt: '/pixel/track'
     };
 });

@@ -3,12 +3,16 @@
 <head>
 <META http-equiv="Content-Type" content="text/html; charset=utf-8">
 <meta name="robots" content="nofollow" />
-    <script src="/pixel/static/js/writer.js?v=2.5"></script>
+    <script src="/pixel/static/js/writer.js?v=3.5"></script>
 </head>
 <body>
 <script>
-        window.writerbyyottos.fb.processing({{ fb|safe }});
-        window.writerbyyottos.uh.processing({{ yt|safe }});
+        if(window.writerbyyottos.fb){
+            window.writerbyyottos.fb.processing({{ fb|safe }});
+        }
+        if(window.writerbyyottos.uh){
+            window.writerbyyottos.uh.processing({{ yt|safe }});
+        }
     </script>
 </body>
 </html>
