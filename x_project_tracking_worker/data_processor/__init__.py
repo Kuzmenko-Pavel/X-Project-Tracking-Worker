@@ -4,7 +4,6 @@ import re
 
 time_regex = re.compile(r'^\d{1,3}$')
 
-
 FB_ACTION = ['AddPaymentInfo', 'AddToCart', 'AddToWishlist', 'CompleteRegistration', 'Contact', 'CustomizeProduct',
              'Donate', 'FindLocation', 'InitiateCheckout', 'Lead', 'PageView', 'Purchase', 'Schedule', 'Search',
              'StartTrial', 'SubmitApplication', 'Subscribe', 'ViewContent']
@@ -23,6 +22,7 @@ class Params(dict):
     Example:
     m = Map({'first_name': 'Eduardo'}, last_name='Pool', age=24, sports=['Soccer'])
     """
+
     def __init__(self, *args, **kwargs):
         super(Params, self).__init__(*args, **kwargs)
         for arg in args:
@@ -67,6 +67,7 @@ class DataProcessor(object):
     async def get_params(self):
         query = self.request.query
         post = await self.request.post()
+
         self.params.account_id = post.get('id', query.get('id', ''))
         self.params.pixel_id = self.request.app.fb_pixel[self.params.account_id]
         self.params.action = post.get('action', query.get('action', ''))
@@ -76,7 +77,7 @@ class DataProcessor(object):
         self.params.time = post.get('time', query.get('time', '356'))
         self.params.cid = post.get('cid', query.get('cid', ''))
         self.params.location = post.get('dl', query.get('dl', ''))
-        self.params.referrer = post.get('rl', query.get('rl', ''))
+        self.params.referer = post.get('rl', query.get('rl', self.request.referer))
         self.params.it = post.get('it', query.get('it', ''))
         self.params.content_name = post.get('content_name', query.get('content_name', ''))
         self.params.content_type = post.get('content_type', query.get('content_type', ''))
@@ -105,10 +106,10 @@ class DataProcessor(object):
                 'v': '2.8.25',
                 'r': 'stable',
                 'if': 'false',
-                'rl': self.params.referrer,
+                'rl': self.params.referer,
                 'dl': self.params.location,
                 'cd[url]': self.params.location,
-                'cd[referrer]': self.params.referrer,
+                'cd[referrer]': self.params.referer,
                 'cd[account]': self.params.account_id,
                 'ec': 1,
                 'o': 60,
@@ -124,11 +125,12 @@ class DataProcessor(object):
             elif self.params.gender == 'w':
                 self.data['fb']['ud[ge]'] = '252f10c83610ebca1a059c0bae8255eba2f95be4d1d7bcfa89d7248a82d9f111'
             if self.params.content_ids:
-                self.data['fb']['cd[content_ids]'] = '[%s]' % ','.join(['"%s...%s"' % (str(x), str(self.params.account_id)) for x in self.params.content_ids])
+                self.data['fb']['cd[content_ids]'] = '[%s]' % ','.join(
+                    ['"%s...%s"' % (str(x), str(self.params.account_id)) for x in self.params.content_ids])
 
     async def goal(self):
         if self.params.cid and self.params.action in GOAL_ACTION:
-            self.data['goal'] ={
+            self.data['goal'] = {
                 'currency': self.params.currency,
                 'price': self.params.price,
                 'cid': self.params.cid
@@ -145,12 +147,12 @@ class DataProcessor(object):
             add.append('_')
 
         self.data['yt'] = {
-                'account_id': self.params.account_id,
-                'gender': self.params.gender,
-                'price': self.params.price,
-                'time': self.params.time,
-                'add': add,
-                'remove': remove
+            'account_id': self.params.account_id,
+            'gender': self.params.gender,
+            'price': self.params.price,
+            'time': self.params.time,
+            'add': add,
+            'remove': remove
         }
 
     async def __call__(self):

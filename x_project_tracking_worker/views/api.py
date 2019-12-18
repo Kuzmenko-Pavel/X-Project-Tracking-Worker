@@ -104,10 +104,9 @@ class ApiView2(web.View):
                 msg = ujson.dumps(data['goal'])
                 await spawn(self.request, amqp_publish(self.request.app, msg, 'goal.auto'))
         except asyncio.CancelledError:
-            logger.error('CancelledError DataProcessor %s' % str(time.time() - self.request.start_time))
+            logger.error('CancelledError DataProcessor')
         except Exception as ex:
-            logger.error(exception_message(time=str(time.time() - self.request.start_time),
-                                           exc=str(ex), request=str(self.request.message), data=data))
+            logger.error(exception_message(exc=str(ex), request=str(self.request.message), data=data))
         return data
 
     async def get(self):
