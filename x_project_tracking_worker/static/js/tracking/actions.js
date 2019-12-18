@@ -33,18 +33,18 @@ define(['underscore', 'cid'], function (_, cid) {
         this.trakers[tracker].content_type = this.content_type;
         this.trakers[tracker].content_category = this.content_category;
         this.trakers[tracker].content_name = this.content_name;
-        if (data['set'] && _.isObject(data['set'])){
-            _.each(data['set'], function (value, key) {
-                this.callMethod(tracker + '.set', key, value);
-            }, this);
-        }
         if (data['track'] && _.isObject(data['track'])){
             _.each(data['track'], function (value, key) {
-                this.callMethod(tracker + '.track', key, value);
+                this.queue.unshift([tracker + '.track', key, value]);
             }, this);
         }
-        if (!page_view){
-             this.callMethod(tracker + '.track', 'PageView', {});
+         if (!page_view){
+            this.queue.unshift([tracker + '.track', 'PageView', {}]);
+        }
+        if (data['set'] && _.isObject(data['set'])){
+            _.each(data['set'], function (value, key) {
+                this.queue.unshift([tracker + '.set', key, value]);
+            }, this);
         }
         defer.resolveWith(this);
         return defer;
@@ -63,10 +63,10 @@ define(['underscore', 'cid'], function (_, cid) {
         var defer = new _.Deferred();
         if(val === 'remarketing'){
             if (data['add']){
-                this.callMethod(tracker + '.track', 'ViewContent', {});
+                this.queue.unshift([tracker + '.track', 'ViewContent', {}]);
             }
             if (data['remove']){
-                this.callMethod(tracker + '.track', 'Purchase', {});
+                this.queue.unshift([tracker + '.track', 'Purchase', {}]);
             }
             defer.resolveWith(this);
         }

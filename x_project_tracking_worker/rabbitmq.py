@@ -19,12 +19,13 @@ async def init_rabbitmq(app):
     app.amqp_exchange = conf['exchange']
 
 
-async def amqp_publish(app, data):
+async def amqp_publish(app, data, routing=None):
     async with app.amqp.acquire() as channel:
         exchange = await channel.declare_exchange(app.amqp_exchange, aio_pika.ExchangeType.TOPIC, durable=True,
                                                   auto_delete=False, passive=False)
-        await exchange.publish(
-            aio_pika.Message(data.encode()), app.amqp_routing_key,
-        )
+        routing_key = app.amqp_routing_key
+        if routing is not None:
+            routing_key = routing
+        await exchange.publish(aio_pika.Message(data.encode()), routing_key)
 
 

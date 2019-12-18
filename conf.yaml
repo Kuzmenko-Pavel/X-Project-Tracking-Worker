@@ -25,6 +25,6 @@ amqp:
   queue: goals
   exchange: goals
   exchange_type: topic
-  routing_key: 'action.goal'
+  routing_key: 'goal.auto'
   durable: true
   auto_delete: false

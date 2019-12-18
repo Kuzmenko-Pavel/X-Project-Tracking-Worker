@@ -142,7 +142,6 @@ define(['./underscore'], function (_) {
                 }
             }
         }
-        console.log(updatedCookie);
         document.cookie = updatedCookie;
 
     };

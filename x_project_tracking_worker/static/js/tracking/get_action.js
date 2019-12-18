@@ -14,15 +14,6 @@ define(['underscore'], function (_) {
             if (!_.isString(key) || !_.isString(val)){
                 return undefined;
             }
-            // if (_.isNaN(dat) || _.isNull(dat) || _.isUndefined(dat)){
-            //     var a = key.split('.')[0];
-            //     if(_.find(['init'], function(e){ return e  === a; })){
-            //         dat = {};
-            //     }
-            //     else {
-            //         return undefined;
-            //     }
-            // }
             if (key){
                 key = key.split('.');
                 if (key.length === 1){

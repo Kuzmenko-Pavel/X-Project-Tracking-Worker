@@ -4,12 +4,13 @@
 define(['./../underscore'], function (_) {
     var prototype = 'prototype';
     var GenderUser = function () {
-        this.gender = void 0;
         this.hit_log = new Array(0, 0, 0);
+        this.gender = void 0;
     };
 
     GenderUser[prototype].add = function (val) {
         if (this.gender === void 0) {
+            this.gender = val;
             this.hit_log[val] += 1;
         }
         else {

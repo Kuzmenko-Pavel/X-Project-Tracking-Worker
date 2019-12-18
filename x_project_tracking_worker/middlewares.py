@@ -69,7 +69,7 @@ async def cookie_middleware(app, handler):
     return middleware
 
 
-async def partner_lock_middleware(app, handler):
+async def ip_middleware(app, handler):
     async def middleware(request):
         ip = '127.0.0.1'
         ip_regex = re.compile(r'^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$')
@@ -91,6 +91,26 @@ async def partner_lock_middleware(app, handler):
             except Exception as ex:
                 logger.error(exception_message(exc=str(ex), request=str(request._message)))
 
+        request.ip = ip
+        response = await handler(request)
+        return response
+
+    return middleware
+
+
+async def referer_middleware(app, handler):
+    async def middleware(request):
+        headers = request.headers
+        request.referer = headers.get('Referer', '')
+        response = await handler(request)
+        return response
+
+    return middleware
+
+
+async def partner_lock_middleware(app, handler):
+    async def middleware(request):
+        ip = request.ip
         user_cookie_name = 'yottos_ptl'
         expires = datetime.utcnow() + timedelta(days=365)
         user_cookie_expires = expires.strftime("%a, %d %b %Y %H:%M:%S GMT")
@@ -105,8 +125,7 @@ async def partner_lock_middleware(app, handler):
         if any([x in ip for x in block_ip]):
             request.partner_lock = True
 
-        referer = headers.get('Referer', '')
-        if len(referer) < 30:
+        if len(request.referer) < 30:
             request.partner_lock = True
 
         request.partner_lock = True
@@ -139,4 +158,6 @@ def setup_middlewares(app):
     app.middlewares.append(error_middleware)
     app.middlewares.append(cookie_middleware)
     app.middlewares.append(disable_cache_middleware)
+    app.middlewares.append(ip_middleware)
+    app.middlewares.append(referer_middleware)
     app.middlewares.append(partner_lock_middleware)
