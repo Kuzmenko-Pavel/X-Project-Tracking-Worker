@@ -26,12 +26,12 @@ define(['./user_history/main', './ytl', './fbq'], function (user_history, Yottos
         };
         this.ping = function (targetOrigin) {
             targetOrigin = targetOrigin || location.protocol.concat("//").concat(location.host);
-            if (parent && parent.postMessage) {
-                parent.postMessage('ytt_iframe:ping', targetOrigin);
+            if (window.parent && window.parent.postMessage) {
+                window.parent.postMessage('ytt_iframe:ping', targetOrigin);
             }
         };
         YottosLib.on_event('message', window, this.post_listener, this);
-        this.ping();
+        this.ping('*');
     };
     return new Loader();
 
