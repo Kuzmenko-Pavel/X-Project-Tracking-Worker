@@ -192,6 +192,15 @@ define([
         var d = _.extend({}, tracker, data, {action: 'Goals'});
         transport.call(this, defer, _.mapObject(d, converter), 'image');
     };
+    track_actions['trackCustom'] = function (
+        tracker,
+        data,
+        action,
+        defer
+    ) {
+        var d = _.extend({}, tracker, data, {action: 'Custom', customAction: action});
+        transport.call(this, defer, _.mapObject(d, converter), 'frame');
+    };
     return track_actions;
 
 

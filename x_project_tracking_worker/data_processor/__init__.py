@@ -6,7 +6,7 @@ time_regex = re.compile(r'^\d{1,3}$')
 
 FB_ACTION = ['AddPaymentInfo', 'AddToCart', 'AddToWishlist', 'CompleteRegistration', 'Contact', 'CustomizeProduct',
              'Donate', 'FindLocation', 'InitiateCheckout', 'Lead', 'PageView', 'Purchase', 'Schedule', 'Search',
-             'StartTrial', 'SubmitApplication', 'Subscribe', 'ViewContent']
+             'StartTrial', 'SubmitApplication', 'Subscribe', 'ViewContent', 'Custom']
 
 GOAL_ACTION = ['CompleteRegistration', 'Donate', 'Lead', 'Purchase', 'Schedule', 'StartTrial', 'SubmitApplication',
                'Subscribe']
@@ -71,6 +71,7 @@ class DataProcessor(object):
         self.params.account_id = post.get('id', query.get('id', ''))
         self.params.pixel_id = self.request.app.fb_pixel[self.params.account_id]
         self.params.action = post.get('action', query.get('action', ''))
+        self.params.customAction = post.get('customAction', query.get('customAction', 'customAction'))
         self.params.gender = post.get('gender', query.get('gender', ''))
         self.params.price = post.get('price', query.get('price', 0))
         self.params.currency = post.get('currency', query.get('currency', 'UAH'))
@@ -100,7 +101,6 @@ class DataProcessor(object):
         if self.params.action in FB_ACTION:
             self.data['fb'] = {
                 'id': self.params.pixel_id,
-                'ev': self.params.action,
                 'it': self.params.it,
                 'ts': self.params.it,
                 'v': '2.8.25',
@@ -120,6 +120,10 @@ class DataProcessor(object):
                 'cd[value]': self.params.value,
                 'cd[currency]': self.params.currency,
             }
+            if self.params.action == 'Custom':
+                self.data['fb']['ev'] = self.params.customAction
+            else:
+                self.data['fb']['ev'] = self.params.action
             if self.params.gender == 'm':
                 self.data['fb']['ud[ge]'] = '62c66a7a5dd70c3146618063c344e531e6d4b59e379808443ce962b3abd63c5a'
             elif self.params.gender == 'w':

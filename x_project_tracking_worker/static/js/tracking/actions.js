@@ -104,8 +104,8 @@ define(['underscore', 'cid'], function (_, cid) {
     };
     actions['trackCustom'] = function (tracker, val, data){
         var defer = new _.Deferred();
-        if (this.track_actions[val] && this.trakers[tracker]){
-            this.track_actions[val].call(this, this.trakers[tracker], data, defer);
+        if (this.track_actions['trackCustom'] && this.trakers[tracker]){
+            this.track_actions['trackCustom'].call(this, this.trakers[tracker], data, val, defer);
         }
         else{
             defer.resolveWith(this);
