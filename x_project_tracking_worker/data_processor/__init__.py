@@ -100,7 +100,7 @@ class DataProcessor(object):
         self.params.ip = self.request.ip
 
     async def fb(self):
-        domain = urlparse("self.params.location").netloc
+        domain = urlparse(self.params.location).netloc
         if fb_block_domain_pattern.search(domain) is not None:
             return
         if self.params.action in FB_ACTION:
