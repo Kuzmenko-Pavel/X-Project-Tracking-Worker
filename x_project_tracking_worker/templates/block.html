@@ -478,8 +478,6 @@ function FBHistory(){
 
 };
 var uh = new UserHistory();
-var fb = new FBHistory();
-fb.view();
 uh.load();
 var ids = '{{offer_id}}'.split(','),
     second = '{{time}}',
@@ -528,16 +526,20 @@ if (ac_id != '')
     uh.gender_user.add(getGender(gender));
 }
 uh.save();
-if (fb_add.length > 0){
-    try{
-        fb['add'](fb_add, ac_id);
-    } catch(e) {}
-}
-if (fb_remove.length > 0){
-    try{
-        fb['remove'](fb_remove, ac_id);
-    } catch(e) {}
-}
+{% if run_fb %}
+    var fb = new FBHistory();
+    fb.view();
+    if (fb_add.length > 0){
+        try{
+            fb['add'](fb_add, ac_id);
+        } catch(e) {}
+    }
+    if (fb_remove.length > 0){
+        try{
+            fb['remove'](fb_remove, ac_id);
+        } catch(e) {}
+    }
+{% endif %}
 </script>
 </head>
 <body>

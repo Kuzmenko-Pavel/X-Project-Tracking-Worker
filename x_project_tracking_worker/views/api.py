@@ -10,7 +10,7 @@ from urllib.parse import parse_qs
 from x_project_tracking_worker.logger import logger, exception_message
 from x_project_tracking_worker.redis import stored
 from x_project_tracking_worker.rabbitmq import amqp_publish
-from x_project_tracking_worker.data_processor import DataProcessor
+from x_project_tracking_worker.data_processor import DataProcessor, fb_block_domain_pattern, urlparse
 
 
 PIXEL_PNG_DATA = base64.b64decode(
@@ -41,6 +41,11 @@ class ApiView(web.View):
         else:
             time = 356 * 24 * 60 * 60
 
+        run_fb = True
+        domain = urlparse(url).netloc
+        if fb_block_domain_pattern.search(domain) is not None:
+            run_fb = False
+
         data = {
             'ip': self.request.ip,
             'account_id': account_id,
@@ -53,7 +58,8 @@ class ApiView(web.View):
             'url': url,
             'referrer': referrer,
             'context': context,
-            'partner_lock': self.request.partner_lock
+            'partner_lock': self.request.partner_lock,
+            'run_fb': run_fb
         }
         if account_id and offer_id:
             remove = []
