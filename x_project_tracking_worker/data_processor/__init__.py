@@ -1,6 +1,8 @@
 __all__ = ['DataProcessor']
 
 import re
+from urllib.parse import urlparse
+from x_project_tracking_worker.fb_block_domains import fb_block_domain_pattern
 
 time_regex = re.compile(r'^\d{1,3}$')
 
@@ -98,6 +100,9 @@ class DataProcessor(object):
         self.params.ip = self.request.ip
 
     async def fb(self):
+        domain = urlparse("self.params.location").netloc
+        if fb_block_domain_pattern.search(domain) is not None:
+            return
         if self.params.action in FB_ACTION:
             self.data['fb'] = {
                 'id': self.params.pixel_id,
@@ -161,7 +166,6 @@ class DataProcessor(object):
 
     async def __call__(self):
         await self.get_params()
-        # print(self.params)
         await self.fb()
         await self.goal()
         await self.yt()

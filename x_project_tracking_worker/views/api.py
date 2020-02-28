@@ -136,7 +136,8 @@ class ApiViewImage(web.View):
         query = self.request.query
         post = await self.request.post()
         action = post.get('action', query.get('action', ''))
-        price = post.get('price', query.get('price', ''))
+        value = post.get('value', query.get('value', ''))
+        price = post.get('price', query.get('price', value))
         currency = post.get('currency', query.get('currency', 'UAH'))
         cid = post.get('cid', query.get('cid', ''))
         if (action == 'goal' or action == 'Goals') and cid != '':
