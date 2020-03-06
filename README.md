@@ -15,3 +15,5 @@
 
 cd docs/
 bundle exec jekyll serve
+
+git pull && supervisorctl restart x-project-tracking-worker:
