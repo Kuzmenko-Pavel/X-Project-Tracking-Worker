@@ -9,5 +9,5 @@ with open(json_path) as json_file:
     for item in data:
         res.append(item)
 
-res = sorted(res)
+res = sorted(list(set(res)))
 fb_block_domain_pattern = re.compile('|'.join(x.replace('.', '\.') for x in res))
