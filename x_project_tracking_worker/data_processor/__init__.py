@@ -135,7 +135,7 @@ class DataProcessor(object):
                 self.data['fb']['ud[ge]'] = '252f10c83610ebca1a059c0bae8255eba2f95be4d1d7bcfa89d7248a82d9f111'
             if self.params.content_ids:
                 self.data['fb']['cd[content_ids]'] = '[%s]' % ','.join(
-                    ['"%s...%s"' % (str(x), str(self.params.account_id)) for x in self.params.content_ids])
+                    ['"%s...%s"' % (str(x).upper(), str(self.params.account_id).upper()) for x in self.params.content_ids])
 
     async def goal(self):
         if self.params.cid and self.params.action in GOAL_ACTION:
