@@ -142,9 +142,19 @@ class ApiViewImage(web.View):
         query = self.request.query
         post = await self.request.post()
         action = post.get('action', query.get('action', ''))
-        value = post.get('value', query.get('value', ''))
-        price = post.get('price', query.get('price', value))
+        try:
+            value = float(post.get('value', query.get('value', 0)))
+        except Exception:
+            value = 0
+        try:
+            price = float(post.get('price', query.get('price', 0)))
+        except Exception:
+            price = 0
+        if price == 0 and value != 0:
+            price = value
         currency = post.get('currency', query.get('currency', 'UAH'))
+        if currency == 'USD':
+            price = price * 27.0
         cid = post.get('cid', query.get('cid', ''))
         if (action == 'goal' or action == 'Goals') and cid != '':
             msg = ujson.dumps({
