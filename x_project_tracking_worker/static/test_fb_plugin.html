@@ -2,8 +2,164 @@
 <html>
 <head>
     <meta charset="utf-8">
-
+<!-- Facebook Pixel Code -->
+    <script>
+        function receiveMessage(event)
+{
+  console.log(event)
+}
+window.addEventListener("message", receiveMessage, false);
+    </script>
+<script>
+!function(f,b,e,v,n,t,s)
+{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+n.queue=[];t=b.createElement(e);
+t.src=v;s=b.getElementsByTagName(e)[0];
+s.parentNode.insertBefore(t,s)}(window, document,'script',
+'https://connect.facebook.net/en_US/fbevents.js');
+fbq('init', '806312163091480');
+fbq('track', 'PageView');
+</script>
+<noscript><img height="1" width="1" style="display:none"
+src="https://www.facebook.com/tr?id=806312163091480&ev=PageView&noscript=1"
+/></noscript>
+<!-- End Facebook Pixel Code -->
 </head>
 <body>
+<script>
+// fbq('track', 'ViewContent', {
+//   content_name: 'Really Fast Running Shoes',
+//   content_category: 'Apparel & Accessories > Shoes',
+//   content_ids: ['1234'],
+//   content_type: 'product',
+//   value: 0.50,
+//   currency: 'USD'
+//  });
+setTimeout(function () {
+    fbq('track', 'Lead');
+}, 2000);
+// fbq('track', 'AddToCart', {
+//         content_name: 'Really Fast Running Shoes',
+//         content_category: 'Apparel & Accessories > Shoes',
+//         content_ids: ['1234'],
+//         content_type: 'product',
+//         value: 4.99,
+//         currency: 'USD'
+//       });
+// var originSignalsFBEventsSendEvent = fbq.__fbeventsModules['signalsFBEventsSendEvent'] || function (){};
+// fbq.__fbeventsModules['signalsFBEventsSendEvent'] = function (q) {
+//     console.log(arguments);
+//     originSignalsFBEventsSendEvent(arguments);
+// };
+    (function wait() {
+    // check for the generic script
+    // easiest check to prevent race condition
+    if (fbq.__fbeventsModules && fbq.__fbeventsModules['signalsFBEventsSendEvent']) {
+
+      fbq.__fbeventsModules['signalsFBEventsSendEvent'] = function () {
+                    return function (
+                        g,
+                        h,
+                        i,
+                        j
+                    ) {
+                        console.log(arguments);
+                        var k = {
+                            exports: {}
+                        };
+                        k.exports;
+                        (function () {
+                                "use strict";
+                                var a = f.getFbeventsModules("SignalsFBEventsEvents")
+                                    , b = a.fired
+                                    , c = f.getFbeventsModules("SignalsFBEventsQE")
+                                    , d = f.getFbeventsModules("SignalsParamList")
+                                    , e = f.getFbeventsModules("signalsFBEventsSendBatch")
+                                    , j = f.getFbeventsModules("signalsFBEventsSendBeacon")
+                                    , l = f.getFbeventsModules("signalsFBEventsSendGET")
+                                    , m = f.getFbeventsModules("signalsFBEventsSendXHR")
+                                    , n = f.getFbeventsModules("signalsFBEventsSendFormPOST")
+                                    , o = f.getFbeventsModules("signalsFBEventsGetIsChrome");
+                                a = f.getFbeventsModules("SignalsFBEventsExperimentNames");
+                                var p = a.BATCHING_EXPERIMENT
+                                    , q = a.SEND_BEACON_STRING_EXPERIMENT
+                                    , r = a.SEND_XHR_EXPERIMENT
+                                    , s = g.top !== g
+                                    , t = "SubscribedButtonClick";
+
+                                function u(a) {
+                                    console.log(arguments);
+                                    var b = a.customData
+                                        , e = a.customParams
+                                        , f = a.eventName
+                                        , j = a.id;
+                                    a = a.piiTranslator;
+                                    a = new d(a);
+                                    a.append("id", j);
+                                    a.append("ev", f);
+                                    a.append("dl", i.href);
+                                    a.append("rl", h.referrer);
+                                    a.append("if", s);
+                                    a.append("ts", new Date().valueOf());
+                                    a.append("cd", b);
+                                    a.append("sw", g.screen.width);
+                                    a.append("sh", g.screen.height);
+                                    e && a.addRange(e);
+                                    a.appendHash(c.getCustomDataPayload());
+                                    return a
+                                }
+
+                                function v(a) {
+                                    console.log(arguments);
+                                    var d = a.customData
+                                        , f = a.eventName;
+                                    a = u(a);
+                                    if (c.isInTest(p)) {
+                                        e(a);
+                                        b.trigger("BATCH", a, d);
+                                        return
+                                    }
+                                    var g = c.isInTestOrControl(q) || !o();
+                                    if (g && f === t && j(a)) {
+                                        b.trigger("BEACON", a, d);
+                                        return
+                                    }
+                                    if (l(a)) {
+                                        b.trigger("GET", a, d);
+                                        return
+                                    }
+                                    if (g && j(a)) {
+                                        b.trigger("BEACON", a, d);
+                                        return
+                                    }
+                                    if (c.isInTest(r)) {
+                                        if (m(a)) {
+                                            b.trigger("XHR", a, d);
+                                            return
+                                        }
+                                        l(a, {
+                                            ignoreRequestLengthCheck: !0
+                                        });
+                                        b.trigger("FGET", a, d);
+                                        return
+                                    }
+                                    n(a);
+                                    b.trigger("POST", a, d)
+                                }
+
+                                k.exports = v
+                            }
+                        )();
+                        return k.exports
+                    }(a, b, c, d)
+                };
+      fbq('track', 'Lead');
+    } else {
+      setTimeout(wait, 1);
+    }
+  })();
+</script>
 </body>
 </html>
